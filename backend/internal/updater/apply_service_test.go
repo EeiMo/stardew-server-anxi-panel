@@ -128,8 +128,8 @@ func TestApplyServiceRejectsDevSameAndDowngrade(t *testing.T) {
 
 func TestReconcileCompletedImageCleanupFromPreviousReleaseHelper(t *testing.T) {
 	service, _ := newApplyServiceTest(t, &fakeDatabaseBackupper{})
-	oldImage := "anxiyizhi/stardew-server-anxi-panel:0.1.14"
-	newImage := "anxiyizhi/stardew-server-anxi-panel:0.1.15"
+	oldImage := "docker.1ms.run/eeimoo/stardew-server-anxi-panel:0.1.14"
+	newImage := "docker.1ms.run/eeimoo/stardew-server-anxi-panel:0.1.15"
 	executor := &applyScenarioExecutor{oldImage: oldImage, newImage: newImage}
 	status := ApplyStatus{
 		UpdateID: "previous-helper", Phase: PhaseSucceeded, FromVersion: "0.1.14", ToVersion: "0.1.15",

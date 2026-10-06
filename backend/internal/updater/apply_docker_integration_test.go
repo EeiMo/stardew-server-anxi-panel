@@ -186,10 +186,10 @@ func TestDockerIntegrationApplyUsesIsolatedComposeProject(t *testing.T) {
 	major := 9000 + time.Now().Nanosecond()%900
 	fromVersion := fmt.Sprintf("%d.0.0", major)
 	toVersion := fmt.Sprintf("%d.0.1", major)
-	oldImage := "ghcr.io/anxiyizhi/stardew-server-anxi-panel:" + fromVersion
-	newImage := "ghcr.io/anxiyizhi/stardew-server-anxi-panel:" + toVersion
-	historyImage := fmt.Sprintf("ghcr.io/anxiyizhi/stardew-server-anxi-panel:%d.0.2", major)
-	protectedImage := fmt.Sprintf("ghcr.io/anxiyizhi/stardew-server-anxi-panel:%d.0.3", major)
+	oldImage := "docker.1ms.run/eeimoo/stardew-server-anxi-panel:" + fromVersion
+	newImage := "docker.1ms.run/eeimoo/stardew-server-anxi-panel:" + toVersion
+	historyImage := fmt.Sprintf("docker.1ms.run/eeimoo/stardew-server-anxi-panel:%d.0.2", major)
+	protectedImage := fmt.Sprintf("docker.1ms.run/eeimoo/stardew-server-anxi-panel:%d.0.3", major)
 	customImage := fmt.Sprintf("panelapply%s/custom:%d.0.4", suffix, major)
 	for _, image := range []string{oldImage, newImage, historyImage, protectedImage, customImage} {
 		if exec.Command("docker", "image", "inspect", image).Run() == nil {
@@ -336,7 +336,7 @@ func TestDockerIntegrationFailedApplyRollsBackWithoutImageCleanup(t *testing.T) 
 	major := 8000 + time.Now().Nanosecond()%900
 	fromVersion := fmt.Sprintf("%d.0.0", major)
 	toVersion := fmt.Sprintf("%d.0.1", major)
-	repository := "ghcr.io/anxiyizhi/stardew-server-anxi-panel:"
+	repository := "docker.1ms.run/eeimoo/stardew-server-anxi-panel:"
 	oldImage := repository + fromVersion
 	newImage := repository + toVersion
 	historyImage := fmt.Sprintf("%s%d.0.2", repository, major)
@@ -470,7 +470,7 @@ func TestDockerIntegrationNewPanelReconcilesPreviousHelperCleanup(t *testing.T) 
 	}
 	suffix := strconv.FormatInt(time.Now().UnixNano()%1_000_000, 10)
 	major := 7000 + time.Now().Nanosecond()%900
-	oldImage := fmt.Sprintf("ghcr.io/anxiyizhi/stardew-server-anxi-panel:%d.0.0", major)
+	oldImage := fmt.Sprintf("docker.1ms.run/eeimoo/stardew-server-anxi-panel:%d.0.0", major)
 	if output, err := exec.Command("docker", "tag", "alpine:3.20", oldImage).CombinedOutput(); err != nil {
 		t.Fatalf("tag previous-helper image: %v: %s", err, output)
 	}

@@ -243,14 +243,18 @@ func TestDockerContractAcceptsCompleteExplicitFallback(t *testing.T) {
 func TestDockerContractRejectsArbitraryAndMutableImages(t *testing.T) {
 	for _, ref := range []string{
 		"evil.example.com/attacker/panel:0.1.15",
-		"anxiyizhi/stardew-server-anxi-panel:latest",
-		"anxiyizhi/stardew-server-anxi-panel:0.1.15@sha256:abcd",
+		"eeimoo/stardew-server-anxi-panel:latest",
+		"eeimoo/stardew-server-anxi-panel:0.1.15@sha256:abcd",
+		// The upstream namespaces must stay untrusted: a fallback to them would
+		// replace this fork's build with the original project's image.
+		"ghcr.io/anxiyizhi/stardew-server-anxi-panel:0.1.15",
+		"anxiyizhi/stardew-server-anxi-panel:0.1.15",
 	} {
 		if err := ValidateTrustedImage(ref); err == nil {
 			t.Fatalf("image %q unexpectedly accepted", ref)
 		}
 	}
-	if err := ValidateTrustedImage("ghcr.io/anxiyizhi/stardew-server-anxi-panel:0.1.15"); err != nil {
+	if err := ValidateTrustedImage("docker.1ms.run/eeimoo/stardew-server-anxi-panel:0.1.15"); err != nil {
 		t.Fatalf("trusted exact image rejected: %v", err)
 	}
 }

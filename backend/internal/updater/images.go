@@ -8,13 +8,23 @@ import (
 
 var exactVersionPattern = regexp.MustCompile(`^(?:v|V)?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$`)
 
+// trustedRepositories is the closed set of image repositories the one-click
+// updater may pull from, in fallback order. It is also what
+// TrustedImageCandidates matches the currently running image against.
+//
+// This fork publishes under its own namespace, and the upstream namespaces are
+// deliberately absent. Keeping them would let a pull for this fork's tag fall
+// back to the upstream image carrying the same version number, which would
+// silently replace this build with the original project's and discard every
+// change made here. Only repositories this fork actually publishes to belong
+// here.
 var trustedRepositories = []string{
-	"crpi-9z3bkb9g7fxeohrg.cn-hangzhou.personal.cr.aliyuncs.com/anxi-panel/stardew-server-anxi-panel",
-	"ghcr.io/anxiyizhi/stardew-server-anxi-panel",
-	"anxiyizhi/stardew-server-anxi-panel",
-	"docker.io/anxiyizhi/stardew-server-anxi-panel",
-	"docker.1ms.run/anxiyizhi/stardew-server-anxi-panel",
-	"docker.m.daocloud.io/anxiyizhi/stardew-server-anxi-panel",
+	"docker.1ms.run/eeimoo/stardew-server-anxi-panel",
+	"docker.1panel.live/eeimoo/stardew-server-anxi-panel",
+	"docker.m.daocloud.io/eeimoo/stardew-server-anxi-panel",
+	"docker.io/eeimoo/stardew-server-anxi-panel",
+	"eeimoo/stardew-server-anxi-panel",
+	"ghcr.io/eeimo/stardew-server-anxi-panel",
 }
 
 func NormalizeTargetVersion(value string) (string, error) {

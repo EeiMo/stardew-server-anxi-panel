@@ -147,8 +147,8 @@ func prepareApplyTest(t *testing.T, scenario *applyScenarioExecutor) (ApplyOptio
 	installDir := t.TempDir()
 	composeFile := filepath.Join(installDir, "docker-compose.yml")
 	envFile := filepath.Join(installDir, ".env")
-	oldImage := "anxiyizhi/stardew-server-anxi-panel:0.1.14"
-	newImage := "anxiyizhi/stardew-server-anxi-panel:0.1.15"
+	oldImage := "docker.1ms.run/eeimoo/stardew-server-anxi-panel:0.1.14"
+	newImage := "docker.1ms.run/eeimoo/stardew-server-anxi-panel:0.1.15"
 	scenario.oldImage, scenario.newImage = oldImage, newImage
 	if err := os.WriteFile(composeFile, []byte("services:\n  panel:\n    image: ${PANEL_IMAGE}\n"), 0o600); err != nil {
 		t.Fatal(err)

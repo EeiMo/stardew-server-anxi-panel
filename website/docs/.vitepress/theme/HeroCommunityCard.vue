@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { QQ_GROUP_JOIN_URL } from './community'
+import { COMMUNITY_FEEDBACK_URL } from './community'
 </script>
 
 <template>
   <a
     class="hero-community-card"
-    :href="QQ_GROUP_JOIN_URL"
+    :href="COMMUNITY_FEEDBACK_URL"
     target="_blank"
     rel="noopener noreferrer"
-    aria-label="加入 Anxi Panel QQ 交流群沟通反馈（在新窗口打开）"
+    aria-label="在 GitHub 上提交部署求助或反馈建议（在新窗口打开）"
   >
     <span class="hero-community-card__icon" aria-hidden="true">
       <svg viewBox="0 0 24 24" role="presentation">
@@ -23,7 +23,7 @@ import { QQ_GROUP_JOIN_URL } from './community'
     </span>
 
     <span class="hero-community-card__action" aria-hidden="true">
-      <span>加入交流群</span>
+      <span>去 GitHub 反馈</span>
       <svg viewBox="0 0 20 20" role="presentation">
         <path d="m7 4 6 6-6 6" />
       </svg>

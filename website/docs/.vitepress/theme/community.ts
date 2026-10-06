@@ -1,1 +1,5 @@
-export const QQ_GROUP_JOIN_URL = 'https://qun.qq.com/universal-share/share?ac=1&authKey=HeQFNP4CqureCKUYia53Hbp8v5O0%2BH5aUPVGyQLofjldXToeO2TSB4JbbYAaWFWW&busi_data=eyJncm91cENvZGUiOiIxMTAzNzk4NDAzIiwidG9rZW4iOiJ2TWhzcWYxNlk4MTlwekdBY1luZWwrY21acTc2SWFkd2wxM25hNUpOOE8rV3RzMThWQWluYUk4Y2F0ZTVIb0poIiwidWluIjoiMTUxNzQ2ODI1MiJ9&data=niTIkqFahNDXKg0NtZOyTcnMsfMI84tU6hUxtn9VnEMYrFTPD7i_dqcj9okLyMQ0sfgLM1m7njUOFxmQqvu64Q&svctype=4&tempid=h5_group_info'
+// This fork has no community group of its own, so the hero card on the landing
+// page points at this repository's issue tracker. The previous value opened the
+// upstream project's QQ group, which sent this fork's users into someone else's
+// community.
+export const COMMUNITY_FEEDBACK_URL = 'https://github.com/EeiMo/stardew-server-anxi-panel/issues'

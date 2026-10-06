@@ -30,6 +30,10 @@ FROM golang:1.25-alpine AS backend-builder
 ARG VERSION=dev
 ARG COMMIT=
 ARG BUILD_DATE=
+# Networks that cannot reach proxy.golang.org (for example mainland China
+# deployments) can pass --build-arg GOPROXY=https://goproxy.cn,direct.
+ARG GOPROXY=https://proxy.golang.org,direct
+ENV GOPROXY=${GOPROXY}
 
 WORKDIR /src
 

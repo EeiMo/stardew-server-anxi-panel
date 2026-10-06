@@ -1864,8 +1864,19 @@ func (r *lifecycleRunner) startInviteCodePolling() {
 		instance:  r.instance,
 	}
 	go func() {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(backgroundInviteAttempts)*(backgroundInviteInterval+inviteCodeTimeout))
+		budget := 2*time.Duration(backgroundInviteAttempts)*(backgroundInviteInterval+inviteCodeTimeout) + 3*time.Minute
+		ctx, cancel := context.WithTimeout(context.Background(), budget)
 		defer cancel()
+		if code := runner.pollInviteCodeAttempts(ctx, backgroundInviteAttempts, backgroundInviteInterval); code != "" {
+			return
+		}
+		// Nothing came back. If the world booted while the steam-auth sidecar was
+		// still restoring its Steam session, JunimoServer has already disabled
+		// Galaxy for this process and will never retry, so recover once and poll
+		// again against the restarted world.
+		if !runner.recoverGalaxyInitialisation(ctx) {
+			return
+		}
 		runner.pollInviteCodeAttempts(ctx, backgroundInviteAttempts, backgroundInviteInterval)
 	}()
 }
@@ -1914,6 +1925,69 @@ func (r *lifecycleRunner) pollInviteCodeAttempts(ctx context.Context, attempts i
 		r.driver.logger.Info("invite code background polling finished without code", "instance", r.instance.ID, "attempts", attempts)
 	}
 	return ""
+}
+
+// serverLogShowsGalaxyUnavailable reports whether the game server log carries the
+// marker JunimoServer emits when it gives up on Galaxy because the steam-auth
+// sidecar was not answering during startup.
+func (r *lifecycleRunner) serverLogShowsGalaxyUnavailable(ctx context.Context) bool {
+	if r.lifecycle == nil {
+		return false
+	}
+	logCtx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+	result, err := r.lifecycle.ComposeLogs(logCtx, r.instance.DataDir, paneldocker.LogsOptions{
+		Service: "server",
+		Tail:    200,
+	})
+	if err != nil {
+		return false
+	}
+	return serverLogShowsSteamAuthServiceNotReady(result.Stdout)
+}
+
+// recoverGalaxyInitialisation restarts the game server so Galaxy initialises
+// against a steam-auth sidecar that is already serving.
+//
+// JunimoServer initialises Galaxy exactly once, at startup. When the sidecar is
+// still cycling through its Steam reconnect attempts at that moment the game logs
+// "Steam-auth service not ready ... Galaxy features unavailable", disables Galaxy
+// for the lifetime of that process, and afterwards only ever prints
+// "Invite Code: N/A" - it never retries, even though the sidecar recovers on its
+// own seconds later. Refreshing only the sidecar therefore cannot repair such a
+// session: the game process itself has to come up again.
+//
+// Observed live on 2026-10-06 on the deployment host: the sidecar failed its first
+// five Steam connection attempts while the world was booting and then logged in
+// successfully, while the world kept reporting N/A for as long as it ran - until
+// it was restarted by hand, which produced an invite code within ten seconds.
+//
+// This runs once per start/restart because startInviteCodePolling owns the single
+// background poller, and the restart it performs does not re-enter this path.
+// Returns true when the server was restarted and polling is worth retrying.
+func (r *lifecycleRunner) recoverGalaxyInitialisation(ctx context.Context) bool {
+	if !sjconfig.SteamInviteEnabled(r.instance.DataDir) {
+		return false
+	}
+	if r.lifecycle == nil {
+		return false
+	}
+	if !r.serverLogShowsGalaxyUnavailable(ctx) {
+		return false
+	}
+	logger := func(message string) {
+		if r.driver != nil && r.driver.logger != nil {
+			r.driver.logger.Info(message, "instance", r.instance.ID)
+		}
+	}
+	restartCtx, cancel := context.WithTimeout(ctx, 120*time.Second)
+	defer cancel()
+	if result, err := r.lifecycle.ComposeRestartServices(restartCtx, r.instance.DataDir, "server"); err != nil {
+		logger("server restart for Galaxy recovery failed: " + err.Error() + dockerResultDetail(result))
+		return false
+	}
+	logger("world booted before the steam-auth sidecar was serving; restarted the server to re-run Galaxy initialisation and will poll the invite code again")
+	return true
 }
 
 func (r *lifecycleRunner) instanceStillRunning(ctx context.Context) bool {

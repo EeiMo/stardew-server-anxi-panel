@@ -162,3 +162,36 @@ ComposeDown、失败阶段被改写成 `new_game_isolation_stop_failed`），已
 （`ghcr.io/anxiyizhi/...` 等）。只改 release 来源时，若 fork 未发布 GitHub Release，
 更新检查会 404 并显示检查失败——这比"提示可升级到上游"更安全。但在把镜像发布到
 fork 自己的仓库或让受信前缀可配置之前，**不要对 fork 构建使用面板内的一键升级**。
+
+### 5. 邀请码一直"等待中/异常"：Galaxy 启动竞态与永久修复
+
+**现场**：邀请码长期 N/A，游戏日志每 34 秒打印一次 `Invite Code: N/A`。
+
+**先排除网络**：该部署主机到 Steam 的连通性是好的 —— DNS 正常、`api.steampowered.com:443`
+通、用 `ISteamDirectory/GetCMList` 取到的 82 个 CM 里 75 个的 27017 可连（亚洲节点
+全部可连）。只有少数美区网段的 27017/27018/27019 被封。
+
+**真正原因**：JunimoServer **只在启动那一刻初始化一次 Galaxy**。世界启动时 sidecar 还在
+重连（它前 5 轮连接尝试都失败，第 6 轮才成功登录），游戏于是打印
+`Steam-auth service not ready ... Galaxy features unavailable` 并**永久关闭 Galaxy**，
+之后无论 sidecar 是否恢复都只打印 N/A。手工在 sidecar healthy 后重启世界，10 秒内即
+产出邀请码，确认了这条因果链。
+
+**为什么面板从未自愈**：`refreshSteamAuthService()` 已有"检测到 not ready 就刷新
+steam-auth"的逻辑，但它挂在 `tailServerLogs()` → `waitForReadyState()` 之下，而
+`waitForReadyState` 在生产路径中已是死代码（见 2026-07-06 文档的
+INVITE-CODE-DECOUPLE-AUTHSTATUS-1）。而且它只重启 sidecar、不重启游戏，即便被触发也
+修不好这种会话。
+
+**修复**：`startInviteCodePolling()` 在首轮轮询无果后调用新增的
+`recoverGalaxyInitialisation()`：读 server 日志匹配 not-ready 标记，命中则**只重启
+server**（不重启 sidecar，避免把它打回重连循环、重现同一竞态），然后再跑一轮轮询回填
+邀请码。只重启 server 不会重入 `startInviteCodePolling`，无循环风险。
+
+**测试**：`lifecycle_test.go` 新增 3 例（命中重启一次 / Galaxy 正常时不动 / 未启用邀请码
+不动）。
+
+**遗留**：sidecar 首次连 Steam 仍可能连续失败约 3–5 分钟。修复只保证竞态不再造成永久
+后果，不缩短该窗口。若要让首启更快拿到码，需要为容器提供可用的 Steam 代理，或让
+面板在启动世界前等待 sidecar 登录成功（后者需引入 `/steam/ready`，与现有"Steam 登录
+不属于健康硬门槛"的契约冲突，未做）。

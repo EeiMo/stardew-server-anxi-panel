@@ -399,6 +399,98 @@ func TestTailServerLogsRefreshesSteamAuthServiceWhenCompletedFlagIsStale(t *test
 	}
 }
 
+// JunimoServer initialises Galaxy once at startup. When the world boots while the
+// steam-auth sidecar is still restoring its Steam session, the game disables
+// Galaxy for the lifetime of the process and never retries, so no invite code can
+// ever appear. Restarting only the sidecar cannot fix that: the game has to come
+// up again. Reproduced live on 2026-10-06, where a manual world restart produced an
+// invite code within ten seconds.
+func TestInviteCodeRecoveryRestartsServerWhenGalaxyWasDisabledAtBoot(t *testing.T) {
+	dir := t.TempDir()
+	enableSteamInviteForLifecycleTest(t, dir)
+
+	var restarted []string
+	fake := &fakeConsoleDocker{
+		composeLogsFunc: func(_ context.Context, _ string, _ paneldocker.LogsOptions) (paneldocker.CommandResult, error) {
+			return paneldocker.CommandResult{
+				Stdout: "[11:24:26 ERROR JunimoServer] Steam-auth service not ready: Could not reach steam-auth service within 30s: Steam auth service request failed after 4 attempts\n" +
+					"[11:24:26 WARN JunimoServer] Steam-auth service not ready, Galaxy features unavailable\n",
+			}, nil
+		},
+		restartFunc: func(_ context.Context, _ string, services ...string) (paneldocker.CommandResult, error) {
+			restarted = append(restarted, services...)
+			return paneldocker.CommandResult{ExitCode: 0}, nil
+		},
+	}
+	runner := &lifecycleRunner{
+		lifecycle: fake,
+		instance:  storage.Instance{ID: "stardew", DataDir: dir},
+	}
+
+	if !runner.recoverGalaxyInitialisation(context.Background()) {
+		t.Fatal("Galaxy recovery must report that a restart was issued")
+	}
+	if !reflect.DeepEqual(restarted, []string{"server"}) {
+		t.Fatalf("expected exactly one server restart, got %#v", restarted)
+	}
+}
+
+func TestInviteCodeRecoveryLeavesHealthyWorldAlone(t *testing.T) {
+	dir := t.TempDir()
+	enableSteamInviteForLifecycleTest(t, dir)
+
+	var restarted []string
+	fake := &fakeConsoleDocker{
+		composeLogsFunc: func(_ context.Context, _ string, _ paneldocker.LogsOptions) (paneldocker.CommandResult, error) {
+			return paneldocker.CommandResult{
+				Stdout: "[11:30:38 INFO JunimoServer] Galaxy server added successfully, invite codes should now work.\n" +
+					"[11:30:53 INFO JunimoServer]   Invite Code: SGFTNJYYWK25\n",
+			}, nil
+		},
+		restartFunc: func(_ context.Context, _ string, services ...string) (paneldocker.CommandResult, error) {
+			restarted = append(restarted, services...)
+			return paneldocker.CommandResult{ExitCode: 0}, nil
+		},
+	}
+	runner := &lifecycleRunner{
+		lifecycle: fake,
+		instance:  storage.Instance{ID: "stardew", DataDir: dir},
+	}
+
+	if runner.recoverGalaxyInitialisation(context.Background()) {
+		t.Fatal("Galaxy recovery must not restart a world whose log shows Galaxy came up")
+	}
+	if len(restarted) != 0 {
+		t.Fatalf("healthy world was restarted: %#v", restarted)
+	}
+}
+
+func TestInviteCodeRecoverySkipsInstancesWithoutSteamInvite(t *testing.T) {
+	dir := t.TempDir()
+
+	var restarted []string
+	fake := &fakeConsoleDocker{
+		composeLogsFunc: func(_ context.Context, _ string, _ paneldocker.LogsOptions) (paneldocker.CommandResult, error) {
+			return paneldocker.CommandResult{Stdout: "Steam-auth service not ready, Galaxy features unavailable\n"}, nil
+		},
+		restartFunc: func(_ context.Context, _ string, services ...string) (paneldocker.CommandResult, error) {
+			restarted = append(restarted, services...)
+			return paneldocker.CommandResult{ExitCode: 0}, nil
+		},
+	}
+	runner := &lifecycleRunner{
+		lifecycle: fake,
+		instance:  storage.Instance{ID: "stardew", DataDir: dir},
+	}
+
+	if runner.recoverGalaxyInitialisation(context.Background()) {
+		t.Fatal("Galaxy recovery must not run when Steam invites are disabled")
+	}
+	if len(restarted) != 0 {
+		t.Fatalf("instance without Steam invites was restarted: %#v", restarted)
+	}
+}
+
 func TestWaitForReadyStateMarksSteamAuthCompletedWhenInviteCodeArrives(t *testing.T) {
 	dir := t.TempDir()
 	enableSteamInviteForLifecycleTest(t, dir)

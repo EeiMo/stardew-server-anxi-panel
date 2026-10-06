@@ -2576,3 +2576,59 @@ HTTP 接口与错误码集合没有变化。
 GitHub Release（tag + 说明）。受信镜像前缀（`internal/updater/images.go`）仍是上游
 命名空间，尚未做成可配置；只改 release 来源时，如果 fork 未发布 Release，
 更新检查会返回 404 并显示检查失败，这比"提示可升级到上游"更安全。
+
+## 2026-10-06 邀请码"等待中/异常"的根因与永久修复（Galaxy 启动竞态）
+
+**现场现象**：面板"Steam 邀请码"长期停在等待中或异常，游戏日志每 34 秒打印一次
+`Invite Code: N/A`。
+
+**排查过程**：
+
+1. 先怀疑网络。实测该部署主机（腾讯云，国内）到 Steam 的连通性：
+   - DNS 解析全部正常；
+   - `api.steampowered.com:443` 通；
+   - 用 `ISteamDirectory/GetCMList` 取到 Steam 公布的 83 个 CM 节点后逐个探测，
+     **82 个里 75 个的 27017 是通的**，亚洲节点（`103.28.54.x`、`155.133.22x.x`、
+     `146.66.15x.x`）全部可连。只有少数美区网段（如 `162.254.192.71`、`208.64.200.39`）
+     的 27017/27018/27019 被封。
+   - **结论：不是网络不通。**
+
+2. 真正的证据在两边日志的时序上：
+   - 游戏侧：`[11:23:46] ✓ Steam SDR / ✓ Galaxy P2P`，紧接着
+     `[11:24:26 ERROR] Steam-auth service not ready: Could not reach steam-auth
+     service within 30s` + `WARN ... Galaxy features unavailable`，此后永久 N/A。
+   - sidecar 侧：`Connecting... (1/5)` 到 `(5/5)` 连续失败（GFW 对它选中的那台 CM
+     超时），**第 6 轮自行重连成功**并 `Logged in as [U:1:670913225]`。
+
+   JunimoServer **只在启动那一刻初始化一次 Galaxy**，失败后不再重试。于是"世界启动
+   时 sidecar 还在重连"这一个竞态，就让整个世界进程永久失去邀请码能力，而 sidecar
+   几秒后已经好了。
+
+3. 手工验证：在 sidecar 已 healthy 的前提下重启游戏世界，10 秒内即产出邀请码
+   `SGFTNJYYWK25`，`/tmp/invite-code.txt` 落盘，面板 6 秒一轮的
+   `/api/instances/stardew/invite-code` 轮询随即回填。
+
+**为什么面板一直没自愈**：`refreshSteamAuthService()` 里其实已经有"检测到 not ready
+就刷新 steam-auth"的逻辑，但它只被 `tailServerLogs()` → `waitForReadyState()` 调用，
+而 `waitForReadyState` 在生产路径中**已经是死代码**（只被测试引用，见
+`docs/backend-handoff/backend-handoff-2026-07-06.md` 的
+INVITE-CODE-DECOUPLE-AUTHSTATUS-1：启动/重启已改用后台邀请码探测）。也就是说这段恢复
+逻辑从未被触发过。而且它**只重启 sidecar、不重启游戏**，即便被触发也修不好这种会话。
+
+**修复**（`lifecycle.go`）：
+
+- `startInviteCodePolling()` 的超时预算放宽以容纳一轮恢复（原预算 + 一轮轮询 + 3 分钟）。
+- 一轮 `pollInviteCodeAttempts` 没拿到码后，调用新增的
+  `recoverGalaxyInitialisation(ctx)`：
+  - 先经 `serverLogShowsGalaxyUnavailable` 读 server 日志（`ComposeLogs`，tail 200），
+    复用既有的 `serverLogShowsSteamAuthServiceNotReady` 标记匹配；
+  - 命中且 `SteamInviteEnabled` 时重启 **server**（不重启 sidecar —— 轮询耗尽时 sidecar
+    早已自行重连成功，重启它反而会把它打回重连循环、重现同一个竞态）；
+  - 返回 true 后**再跑一轮** `pollInviteCodeAttempts` 把码回填。
+- 只重启 server 不会重新进入 `startInviteCodePolling`，因此不存在重启循环。
+
+**测试**（`lifecycle_test.go`）：新增 3 例 —— 日志带 not-ready 标记时恰好重启一次
+server；日志显示 Galaxy 正常启动时不动；未启用邀请码的实例不动。
+
+**仍未处理**：sidecar 首次连 Steam 可能连续失败 5 轮（GFW 对其选中的 CM 超时）才成功，
+期间约 3–5 分钟。修复只是让竞态不再造成永久性后果，并不缩短这个窗口。

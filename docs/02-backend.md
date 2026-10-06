@@ -2554,3 +2554,25 @@ HTTP 接口与错误码集合没有变化。
   存档也不会加载。`ComposeRecreateServices` 本就强制重建容器，因此不需要额外停服。
 - **只删指针文件，不移动也不删除任何存档目录**；失败由既有的 `restore_gameloader`
   回滚步骤还原改动前的指针原始字节，成功后由 JunimoServer 写入新档自己的指针。
+
+## 2026-10-06 面板自身更新检查来源可配置（`PANEL_RELEASE_API_URL`）
+
+**问题**：`updatecheck` 的 `defaultLatestReleaseURL` 硬编码为
+`https://api.github.com/repos/anxiyizhi/stardew-server-anxi-panel/releases/latest`，
+`internal/config` 没有对应字段，`cmd/panel/main.go` 与 `internal/web/handler.go`
+两个调用点也都没有传 `LatestReleaseURL`。因此 fork 构建的面板仍然把**上游**版本当成
+可用更新，"查看更新页"链接指向原作者 Release；更危险的是 `internal/updater/images.go`
+的受信镜像前缀同样是上游命名空间，点一次"一键升级"就会用上游镜像覆盖 fork 构建。
+
+**修复**：新增 `Config.ReleaseAPIURL`，来自环境变量 `PANEL_RELEASE_API_URL`，
+留空保持内置上游默认值（不改变既有部署行为）。两个 `updatecheck.New` 调用点都传入
+`LatestReleaseURL`。部署侧由 `deploy/run.sh` 写入 `.env` 并在生成的 compose 中透传，
+示例 `deploy/docker-compose.yml` 同步补注释。
+
+**验证**：`go build ./...`、`go vet`、`bash -n deploy/run.sh` 通过；
+`internal/config` 与 `internal/updatecheck` 全量用例通过，新增 2 个 config 用例。
+
+**注意**：这只改了"检查哪个仓库"。要让面板显示自己的改动点，fork 需要真的发布
+GitHub Release（tag + 说明）。受信镜像前缀（`internal/updater/images.go`）仍是上游
+命名空间，尚未做成可配置；只改 release 来源时，如果 fork 未发布 Release，
+更新检查会返回 404 并显示检查失败，这比"提示可升级到上游"更安全。

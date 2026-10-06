@@ -46,6 +46,13 @@ type Config struct {
 	ControlCommandRetentionDays  int
 	ControlCommandRetentionCount int
 	EnableModdedFarmCreation     bool
+	// ReleaseAPIURL overrides the GitHub "releases/latest" endpoint the panel
+	// polls for its own update check. Forks must point this at their own
+	// repository: with the upstream default the panel reports the upstream
+	// project's version as an available update, and the one-click updater would
+	// then replace this build with the upstream image. Empty keeps the built-in
+	// upstream default.
+	ReleaseAPIURL string
 }
 
 // Load reads panel configuration from environment variables and applies defaults.
@@ -84,6 +91,7 @@ func Load() Config {
 		ControlCommandRetentionDays:  getPositiveIntEnv("CONTROL_COMMAND_RETENTION_DAYS", DefaultControlCommandRetentionDays),
 		ControlCommandRetentionCount: getPositiveIntEnv("CONTROL_COMMAND_RETENTION_COUNT", DefaultControlCommandRetentionCount),
 		EnableModdedFarmCreation:     getBoolEnv("ENABLE_MODDED_FARM_CREATION", true),
+		ReleaseAPIURL:                getEnv("PANEL_RELEASE_API_URL", ""),
 	}
 }
 

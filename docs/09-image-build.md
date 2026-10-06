@@ -2792,3 +2792,26 @@ curl -fsSL -o migrate-fnos.sh https://github.com/anxiyizhi/stardew-server-anxi-p
 - 同一候选执行 fresh install、`/health`、`/api/version`、未初始化态、Panel restart，并从真实 `v0.5.11` 通过 Web API 完成检查、dry-run、apply、断线重连和 `v0.5.12` 终态；unhealthy 目标得到失败回滚和旧版恢复。SQLite integrity、初始化状态、长期 sentinel、非目标游戏容器/volume、Panel 重启、Mod 检查、legacy runtime repair 与存档导入边界均保持。候选封存为 `ghcr.io/anxiyizhi/stardew-server-anxi-panel:candidate-0.5.12-5141cd54dca1@sha256:faf910075f4b25a3172fe4ee53341cf53b9c3c26c1065ce38b65c19fcc9af5a0`，不可变 proof artifact 为 `release-candidate-0.5.12-5141cd54dca1`；独立 Compatibility workflow `32623320473` 同样成功。
 - 自动 tag workflow `32623853636` 只在候选 commit 仍精确等于 `origin/main` 后创建 annotated `v0.5.12`；tag type 为 `tag`，peeled commit 为 `5141cd54dca1752419a9d738f873623a4871f884`。正式提升 `32623863894` 约 1 分 10 秒完成且未重新 build：Docker Hub、阿里云 ACR、GHCR 的 `0.5.12` 与 `latest` 六个引用经独立 `buildx imagetools inspect` 复核，全部等于候选唯一 digest。回拉一个正式 GHCR 版本的 health/version 冒烟通过，GitHub Release `v0.5.12` 为非 draft、非 prerelease 且成为 latest。
 - 本轮候选、Compatibility、自动 tag 与正式提升均一次成功，没有失败步骤或重跑。候选使用 GitHub-hosted 临时 runner 和脚本 EXIT trap 回收 fresh/DinD 容器、网络、volume 与临时文件；本机 Docker `sap-farm-cave` owner 的容器/网络/volume、4179 监听、Control 构建目录和失败夹具均为 0，下载的候选 proof 临时目录也已按精确路径删除。没有移动既有 tag，也没有在正式提升中重建镜像。
+
+## 2026-10-06 部署侧：`PANEL_RELEASE_API_URL` 透传
+
+面板自身的更新检查来源现在可配置，供 fork 使用：
+
+- `deploy/run.sh` 把 `PANEL_RELEASE_API_URL` 写进 `$ENV_FILE`（`.env`），并在生成的
+  compose 的 `panel.environment` 中透传 `PANEL_RELEASE_API_URL: "${PANEL_RELEASE_API_URL:-}"`。
+  该变量此前只用于安装脚本解析待拉取版本，从未进入面板容器。
+- `deploy/docker-compose.yml`（示例）补了对应注释，说明 fork 必须指向自己的仓库。
+- 面板侧读取见 `backend/internal/config`（`Config.ReleaseAPIURL`）。
+
+**fork 部署要点**：`.env` 中设置
+
+```bash
+PANEL_RELEASE_API_URL=https://api.github.com/repos/<owner>/<repo>/releases/latest
+```
+
+并在该仓库发布 GitHub Release，否则面板的更新检查会 404 并显示检查失败。
+
+**尚未处理**：`internal/updater/images.go` 的受信镜像前缀依旧是上游命名空间
+（`anxiyizhi/stardew-server-anxi-panel` 等）。只要面板仍从该命名空间拉取，
+"一键升级"就会用上游镜像覆盖 fork 构建；在把镜像发布到自己的仓库之前，不要对 fork
+构建使用面板内的一键升级。

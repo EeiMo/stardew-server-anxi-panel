@@ -155,10 +155,11 @@ func main() {
 	})
 	go commandScheduler.Run(signalCtx)
 	updateChecker := updatecheck.New(updatecheck.Options{
-		CurrentVersion: cfg.Version,
-		Commit:         cfg.Commit,
-		BuildDate:      cfg.BuildDate,
-		Logger:         logger,
+		CurrentVersion:   cfg.Version,
+		Commit:           cfg.Commit,
+		BuildDate:        cfg.BuildDate,
+		LatestReleaseURL: cfg.ReleaseAPIURL,
+		Logger:           logger,
 	})
 	go updateChecker.Run(signalCtx)
 	hostname, _ := os.Hostname()

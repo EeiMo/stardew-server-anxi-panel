@@ -141,10 +141,11 @@ func NewHandlerWithError(deps Deps) (http.Handler, error) {
 	}
 	if s.updateChecker == nil {
 		s.updateChecker = updatecheck.New(updatecheck.Options{
-			CurrentVersion: s.config.Version,
-			Commit:         s.config.Commit,
-			BuildDate:      s.config.BuildDate,
-			Logger:         logger,
+			CurrentVersion:   s.config.Version,
+			Commit:           s.config.Commit,
+			BuildDate:        s.config.BuildDate,
+			LatestReleaseURL: s.config.ReleaseAPIURL,
+			Logger:           logger,
 		})
 	}
 	if s.updater == nil {

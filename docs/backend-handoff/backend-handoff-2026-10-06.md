@@ -134,3 +134,31 @@ ComposeDown、失败阶段被改写成 `new_game_isolation_stop_failed`），已
   "新档继承旧档角色"。
 - 上游 `CreateNewGameCore` 仍不清 `Game1.otherFarmers`；本修复是靠"启动时不加载任何
   存档"绕开内存残留。真正的上游修复应是在 `loadForNewGame()` 前显式清空它。
+
+### 4. 面板自身更新检查来源可配置（`config.go`、`cmd/panel/main.go`、`web/handler.go`、`deploy/`）
+
+**问题**：`updatecheck.defaultLatestReleaseURL` 硬编码为上游仓库
+`api.github.com/repos/anxiyizhi/stardew-server-anxi-panel/releases/latest`，
+`internal/config` 没有对应字段，`cmd/panel/main.go` 与 `internal/web/handler.go`
+两个 `updatecheck.New` 调用点也都没有传 `LatestReleaseURL`。于是 fork 构建的面板仍然
+把**上游**版本当成可用更新："版本详情 / 查看更新页"指向原作者的 Release；而
+`internal/updater/images.go` 的受信镜像前缀同样是上游命名空间，点一次"一键升级"就会
+用上游镜像覆盖 fork 构建。
+
+**修复**：新增 `Config.ReleaseAPIURL`，来自环境变量 `PANEL_RELEASE_API_URL`，
+**留空保持内置上游默认值**（不改变既有部署行为），两个调用点传入
+`LatestReleaseURL`；`deploy/run.sh` 把该变量写进 `.env` 并在生成的 compose 中透传
+（此前该变量只被安装脚本用来解析待拉取版本，从未进入面板容器），
+`deploy/docker-compose.yml` 示例同步补注释。
+
+**影响文件**：`internal/config/config.go`、`cmd/panel/main.go`、
+`internal/web/handler.go`、`deploy/run.sh`、`deploy/docker-compose.yml`；
+新增 `internal/config/release_api_url_test.go`（2 例）。
+
+**验证**：`go build ./...`、`go vet`、`git bash -n deploy/run.sh` 通过；
+`internal/config` 与 `internal/updatecheck` 全量用例通过。
+
+**尚未处理（重要）**：`internal/updater/images.go` 的受信镜像前缀仍是上游命名空间
+（`ghcr.io/anxiyizhi/...` 等）。只改 release 来源时，若 fork 未发布 GitHub Release，
+更新检查会 404 并显示检查失败——这比"提示可升级到上游"更安全。但在把镜像发布到
+fork 自己的仓库或让受信前缀可配置之前，**不要对 fork 构建使用面板内的一键升级**。

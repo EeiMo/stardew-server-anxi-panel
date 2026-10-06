@@ -1010,6 +1010,73 @@ func TestRepairGameloaderPointer_NoopWhenPointerResolves(t *testing.T) {
 	}
 }
 
+// A new game must be created by a boot that loads no save at all: JunimoServer's
+// GameCreatorService skips vanilla's ResetGameStateOnTitleScreen(), so the
+// process keeps the previously loaded save's Game1.otherFarmers and serializes
+// those farmhands into the brand-new save. GameLoaderService.HasLoadableSave()
+// is false whenever the pointer is absent, so clearing it is the whole isolation.
+func TestClearGameloaderPointerBootsWithNoActiveSave(t *testing.T) {
+	dir := t.TempDir()
+	savesRoot := filepath.Join(dir, ".local-container", "saves", "Saves")
+	for _, name := range []string{"Old_1", "Other_2"} {
+		if err := os.MkdirAll(filepath.Join(savesRoot, name), 0o755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := SetActiveSave(dir, "Old_1"); err != nil {
+		t.Fatal(err)
+	}
+	if got := GetActiveSaveName(dir); got != "Old_1" {
+		t.Fatalf("active save = %q, want Old_1", got)
+	}
+
+	removed, err := ClearGameloaderPointer(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !removed {
+		t.Fatal("ClearGameloaderPointer reported no removal for an existing pointer")
+	}
+	// The other save folders are untouched, but with no pointer nothing is
+	// loadable and the new-game transaction must not baseline against a world it
+	// would then inherit farmhands from.
+	if got := GetActiveSaveName(dir); got != "" {
+		t.Fatalf("active save = %q after clearing the pointer, want empty", got)
+	}
+	if writer := chooseNewGameCreationWriter(dir, GetActiveSaveName(dir)); writer != newGameCreationWriterStartup {
+		t.Fatalf("creation writer = %q, want %q", writer, newGameCreationWriterStartup)
+	}
+	if entries, listErr := listSaveDirs(dir); listErr != nil || len(entries) != 2 {
+		t.Fatalf("listSaveDirs = (%v, %v), want both save folders left in place", entries, listErr)
+	}
+
+	if again, againErr := ClearGameloaderPointer(dir); againErr != nil || again {
+		t.Fatalf("second clear = (%t, %v), want (false, nil)", again, againErr)
+	}
+}
+
+// A complete active save selects the /newgame writer, which is exactly the path
+// that inherits farmhands. This pins the pre-condition the isolation step in
+// doStart must remove before the boot.
+func TestChooseNewGameCreationWriterRequiresCompleteActiveSaveForHTTP(t *testing.T) {
+	dir := t.TempDir()
+	saveRoot := filepath.Join(dir, ".local-container", "saves", "Saves", "Old_1")
+	if err := os.MkdirAll(saveRoot, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"Old_1", "SaveGameInfo"} {
+		if err := os.WriteFile(filepath.Join(saveRoot, name), []byte("<SaveGame></SaveGame>"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if writer := chooseNewGameCreationWriter(dir, "Old_1"); writer != newGameCreationWriterHTTP {
+		t.Fatalf("creation writer = %q, want %q", writer, newGameCreationWriterHTTP)
+	}
+	if writer := chooseNewGameCreationWriter(dir, ""); writer != newGameCreationWriterStartup {
+		t.Fatalf("creation writer for an empty active save = %q, want %q", writer, newGameCreationWriterStartup)
+	}
+}
+
 func TestValidateSaveExists(t *testing.T) {
 	dir := t.TempDir()
 	savePath := filepath.Join(dir, ".local-container", "saves", "Saves", "RealSave")

@@ -2835,3 +2835,12 @@ Multi Game Mode later
   而不是让游戏自行新建农场。
 - 待跟进（可观测性）：`new_game_target_ambiguous` 目前只能靠人工清理现场，
   后续可考虑提供受控的现场导出与收敛入口。
+
+## 2026-10-06 补充状态
+
+- 已完成：新建存档隔离 —— 建档前清空 gameloader 指针并强制走启动建档路径，
+  新农场不再继承旧存档的 farmhand 角色。详见
+  `docs/backend-handoff/backend-handoff-2026-10-06.md`。
+- 待跟进（上游）：`GameCreatorService.CreateNewGameCore()` 仍不清空
+  `Game1.otherFarmers`。面板当前是"启动时不加载任何存档"绕开内存残留；真正的上游
+  修复应在 `loadForNewGame()` 之前显式清空该集合。

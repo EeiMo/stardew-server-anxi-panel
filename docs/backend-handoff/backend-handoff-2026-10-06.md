@@ -77,6 +77,51 @@ go -C backend test ./... -count=1
 3. 另造一个 Control 先写外来 `saveId`、30ms 后写目标 `saveId` 的场景 →
    等待函数应在 settle 窗口内收敛而不是立即失败。
 
+### 3. 新建存档不再继承旧存档角色（`saves.go`、`lifecycle.go`）
+
+**现象**：新建的存档不是全新的空档，而是**继承了上一个存档的 farmhand 角色**。
+实测两个存档的 `<farmhands>` 对比：
+
+| | 旧档 `EM_<uid>` | 新档 `<farmName>_<uid>` |
+| --- | --- | --- |
+| EeiMoo | `mp=2456427634486916985`，money=504，home=FarmHouseb37d1e14 | **同一个 mp、同一 money、同一 home** |
+| 云钰 | `mp=3218377211705406547`，money=504，home=FarmHouse243917f6 | **同一个 mp、同一 money、同一 home** |
+| Server | `mp=3784890483723811648`，money=504，home=FarmHouse3a4fef76 | **同一个 mp、同一 money、同一 home** |
+| 空位 | Axe `mp=-5091830112777305997`，money=500 | 3 个全新 Axe，money=500 |
+
+同时新档出现指向旧档 FarmHouse 的孤儿 farmhand，JunimoServer 只能靠
+`Healed lobby-homed farmhand` 逻辑勉强安置。
+
+**根因（上游 JunimoServer）**：`GameCreatorService.CreateNewGameCore()` 跳过 vanilla
+标题界面的 `ResetGameStateOnTitleScreen()`（该符号在整个 JunimoServer 仓库里只出现在
+这行注释中），却只补偿了 `Game1.uniqueIDForThisGame` 的重掷，没有清理
+`Game1.otherFarmers`。而 `/newgame` 是发往**已经加载了旧存档的同一个进程**的，
+于是旧存档的 farmhand 对象在内存中存活，并在新档首次保存时被一起序列化。
+
+**修复**：在 `doStart` 的新建存档分支、`ComposeRecreateServices` 之前做一次隔离：
+
+1. `ClearGameloaderPointer`（`saves.go` 新增）删除 `junimohost.gameloader.json`。
+   JunimoServer 的 `GameLoaderService.HasLoadableSave()` 在指针缺失时直接返回 false，
+   **即使 `Saves/` 里仍有其它存档也不会加载**，因此这是唯一需要的开关；
+2. 把 `newGameTx.record.CreationWriter` 强制为 `startup` 并持久化，使事务不再走
+   `waitForHTTPNewGameBaseline` / `POST /newgame`，而是在空名册进程里由 JunimoServer
+   启动建档。指针缺失本身也会让 `chooseNewGameCreationWriter` 选择 startup，第 2 步
+   只是把已在内存中算出的选择对齐到磁盘事实。
+
+**刻意不加显式停服**：`ComposeRecreateServices` 本就会强制重建容器，读到指针的一定是
+全新进程，所以不需要额外的 `ComposeDown`。第一版实现额外调用了
+`stopRuntimeServices`，结果破坏 5 个既有的失败延迟/回滚契约测试（多出一次
+ComposeDown、失败阶段被改写成 `new_game_isolation_stop_failed`），已在提交前移除。
+新增的隔离步骤只做两件幂等且可回滚的事，不引入新的停服语义。
+
+**存档安全**：只删指针文件，**不移动也不删除任何存档目录**。改动前的指针原始字节早已
+由事务快照保存在 `tx.record.Gameloader`，失败时由既有的 `restore_gameloader` 回滚步骤
+原样还原；成功后由 JunimoServer 的 `SetCurrentGameAsSaveToLoad` 写入新档自己的指针。
+`ComposeRecreateServices` 本来就强制重建容器，所以不存在"复用已加载旧世界的进程"。
+
+**影响文件**：`saves.go`（新增 `ClearGameloaderPointer`，`DeleteAllSaves` 复用它）、
+`lifecycle.go`（`doStart` 新建存档分支的隔离块）、`saves_test.go`（2 个用例）。
+
 ## 下一步注意事项
 
 - `IdentitySettleWindow` 目前只由等待函数套默认值，`new_game_lifecycle.go` 的调用点
@@ -84,3 +129,8 @@ go -C backend test ./... -count=1
 - 指针自愈只在 `doStart` 生效。若将来新增其它启动入口（例如定时计划直接拉起
   compose），必须复用 `RepairGameloaderPointer`，否则会重新打开"静默新建农场"。
 - 上游 JunimoServer 仍会写错误的农场名前缀；本修复是兜底，不是根因修复。
+- 同一处：新建存档的隔离只在 `doStart` 生效。任何绕过 `doStart` 直接发
+  `settings newgame` 或直接 `POST /newgame` 的新入口都必须先清指针，否则会重新引入
+  "新档继承旧档角色"。
+- 上游 `CreateNewGameCore` 仍不清 `Game1.otherFarmers`；本修复是靠"启动时不加载任何
+  存档"绕开内存残留。真正的上游修复应是在 `loadForNewGame()` 前显式清空它。

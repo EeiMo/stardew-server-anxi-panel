@@ -1256,6 +1256,43 @@ func (r *lifecycleRunner) doStart(ctx context.Context, jobCtx *jobs.Context) (re
 		_, _ = jobCtx.Info(ctx, fmt.Sprintf("已隔离重复的 SMAPI 内置组件：%s。原文件保留在私有隔离目录。", strings.Join(quarantined, "、")))
 	}
 
+	// A new game must be created by a process that has no save loaded.
+	//
+	// JunimoServer's GameCreatorService skips vanilla's
+	// ResetGameStateOnTitleScreen() and only compensates for the game-id re-roll,
+	// so Game1.otherFarmers still holds whatever save this boot would have
+	// loaded. Because /newgame is then issued into that same process, the
+	// previous save's farmhands are serialized into the brand-new save: the new
+	// farm silently inherits the old farm's characters (identical
+	// uniqueMultiplayerID, money and homeLocation) and JunimoServer later
+	// "heals" them as lobby-homed orphans.
+	//
+	// Clearing the pointer makes GameLoaderService.HasLoadableSave() false, so the
+	// boot below loads nothing at all and the world is built from an empty
+	// roster; it is also what selects the startup creation writer instead of
+	// /newgame. ComposeRecreateServices immediately below force-recreates the
+	// containers, so the process that reads the pointer is always a fresh one and
+	// no explicit stop is needed here; an extra ComposeDown would also change the
+	// failure-defer and rollback contract that the lifecycle tests pin. The
+	// pre-change pointer bytes are already captured in newGameTx.record.Gameloader
+	// and restored by the restore_gameloader rollback step, and JunimoServer
+	// writes the created save's own pointer through SetCurrentGameAsSaveToLoad.
+	if r.newGame {
+		removed, clearErr := ClearGameloaderPointer(r.instance.DataDir)
+		if clearErr != nil {
+			return &NewGameTransactionError{Code: "new_game_pointer_clear_failed", Message: "新建存档前清空旧存档指针失败", Cause: clearErr}
+		}
+		if removed {
+			_, _ = jobCtx.Info(ctx, "已清空旧存档指针：本次建档在未加载任何存档的进程中创建全新世界。")
+		}
+		if newGameTx.record.CreationWriter != newGameCreationWriterStartup {
+			newGameTx.record.CreationWriter = newGameCreationWriterStartup
+			if err := newGameTx.persist(); err != nil {
+				return &NewGameTransactionError{Code: "new_game_state_write_failed", Message: "记录建档方式失败", Cause: err}
+			}
+		}
+	}
+
 	// compose up can return non-zero after creating or starting only part of the
 	// project. Treat the runtime as potentially live before invoking it so the
 	// failure defer must confirm ComposeDown before restoring transaction files.

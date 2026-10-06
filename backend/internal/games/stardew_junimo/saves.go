@@ -121,9 +121,23 @@ func DeleteAllSaves(dataDir string) error {
 	_ = os.RemoveAll(smaCacheDir)
 
 	// Clear gameloader config so JunimoServer doesn't try to load a deleted save.
-	gameloaderPath := filepath.Join(savesDir(dataDir), ".smapi", "mod-data", "junimohost.server", "junimohost.gameloader.json")
-	_ = os.Remove(gameloaderPath)
+	_, _ = ClearGameloaderPointer(dataDir)
 	return nil
+}
+
+// ClearGameloaderPointer removes the JunimoServer gameloader pointer so the next
+// boot loads no save at all. GameLoaderService.HasLoadableSave() returns false
+// whenever the pointer is absent, even while other save folders still exist, so
+// this is the only switch needed to boot a process with an empty world roster.
+// Returns whether a pointer was actually removed.
+func ClearGameloaderPointer(dataDir string) (bool, error) {
+	if err := os.Remove(gameloaderPath(dataDir)); err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }
 
 // listSaveDirs returns each save folder name found under <savesDir>/Saves/.

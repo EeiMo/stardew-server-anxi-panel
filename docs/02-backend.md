@@ -2538,3 +2538,19 @@ Junimo/auth dry-run 在拉取后将 tag 解析出的 RepoDigest 与矩阵逐项�
   事务目标也非旧基线的 `save-loaded` 快照在窗口内重试，而不是第一次观测就终态失败。
 
 HTTP 接口与错误码集合没有变化。
+
+## 2026-10-06 新建存档隔离（新农场不再继承旧存档角色）
+
+详见 `docs/backend-handoff/backend-handoff-2026-10-06.md`。
+
+- 上游 `GameCreatorService.CreateNewGameCore()` 跳过 vanilla 的
+  `ResetGameStateOnTitleScreen()`，只补偿了 game-id 重掷，从未清空
+  `Game1.otherFarmers`；而 `/newgame` 发往已经加载旧存档的同一个进程，于是旧档的
+  farmhand（相同 `uniqueMultiplayerID`、金钱与 `homeLocation`）被序列化进新档。
+- 修复：`saves.go` 新增 `ClearGameloaderPointer`（`DeleteAllSaves` 复用它）；
+  `doStart` 的新建存档分支在 `ComposeRecreateServices` 之前清空指针、
+  并把 `CreationWriter` 强制为 `startup`。指针缺失时 JunimoServer 的
+  `GameLoaderService.HasLoadableSave()` 直接返回 false，即使 `Saves/` 中仍有其它
+  存档也不会加载。`ComposeRecreateServices` 本就强制重建容器，因此不需要额外停服。
+- **只删指针文件，不移动也不删除任何存档目录**；失败由既有的 `restore_gameloader`
+  回滚步骤还原改动前的指针原始字节，成功后由 JunimoServer 写入新档自己的指针。

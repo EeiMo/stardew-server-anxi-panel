@@ -4,7 +4,7 @@ import { useData, useRoute, withBase } from 'vitepress'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import HeroCommunityCard from './HeroCommunityCard.vue'
 import HeroInviteCard from './HeroInviteCard.vue'
-import { QQ_GROUP_JOIN_URL } from './community'
+import { COMMUNITY_FEEDBACK_URL } from './community'
 
 const route = useRoute()
 const { frontmatter, page, site } = useData()
@@ -182,7 +182,7 @@ watch(() => route.path, () => {
         </div>
         <div class="doc-help-actions">
           <a :href="withBase('/faq/')">查看常见问题</a>
-          <a class="secondary" :href="QQ_GROUP_JOIN_URL" target="_blank" rel="noopener noreferrer">加群反馈 ↗</a>
+          <a class="secondary" :href="COMMUNITY_FEEDBACK_URL" target="_blank" rel="noopener noreferrer">反馈建议 ↗</a>
         </div>
       </section>
     </template>

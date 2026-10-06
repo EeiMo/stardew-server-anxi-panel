@@ -35,7 +35,11 @@ jobs:
       contents: read
       packages: write
     steps:
+      # Full history and tags: a branch build derives its version from the highest
+      # existing tag, which a shallow checkout would not have.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # Registry repository paths must be lowercase, but the account name is not.
       - name: Resolve image references
@@ -52,28 +56,34 @@ jobs:
             echo "dockerhub=" >>"$GITHUB_OUTPUT"
           fi
 
-      # A tag push (v0.8.0) is what produces a version the panel's one-click
-      # updater can consume. internal/updater.NormalizeTargetVersion only accepts
-      # an exact stable semantic version, and TrustedImageCandidates builds the
-      # pull reference as <repository>:<that version>, so the image must carry a
-      # stable tag or the updater has nothing to pull. Branch pushes only refresh
-      # :latest and get a development version, which the update check reports as
-      # unavailable rather than offering a bogus upgrade.
+      # Every image must carry a stable MAJOR.MINOR.PATCH version, including branch
+      # builds.
+      #
+      # The panel's one-click updater accepts an exact stable semantic version only:
+      # internal/updater.NormalizeTargetVersion rejects anything with a prerelease
+      # suffix, while the update check's parseSemver accepts one. A build versioned
+      # 0.7.2-ei.11 therefore gets an "upgrade available" offer from the check and is
+      # refused by the apply every single time - the button can never work. Do not
+      # reintroduce a prerelease version scheme here.
+      #
+      #   tag push    -> that exact version, e.g. v0.8.1 -> 0.8.1
+      #   branch push -> the highest existing tag, so a branch build equals the
+      #                  release it is based on and no upgrade is offered until a
+      #                  newer tag exists.
       - name: Compute build metadata
         id: meta
         run: |
           set -euo pipefail
           if [ "${{ github.ref_type }}" = "tag" ]; then
             version="${GITHUB_REF_NAME#v}"
-            version="${version#V}"
-            if ! printf '%s' "$version" | grep -Eq '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'; then
-              echo "::error::tag ${GITHUB_REF_NAME} is not a stable semantic version; expected vMAJOR.MINOR.PATCH"
-              exit 1
-            fi
-            echo "stable=true" >>"$GITHUB_OUTPUT"
           else
-            version="0.7.2-ei.${{ github.run_number }}"
-            echo "stable=false" >>"$GITHUB_OUTPUT"
+            version="$(git tag --list 'v*' --sort=-v:refname | head -n1)"
+          fi
+          version="${version#v}"
+          version="${version#V}"
+          if ! printf '%s' "$version" | grep -Eq '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'; then
+            echo "::error::no stable semantic version to build with (got '${version:-<none>}'); create an annotated vMAJOR.MINOR.PATCH tag first, because the panel updater rejects prerelease versions outright"
+            exit 1
           fi
           echo "version=${version}" >>"$GITHUB_OUTPUT"
           echo "commit=$(git rev-parse HEAD)" >>"$GITHUB_OUTPUT"

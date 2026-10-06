@@ -149,6 +149,27 @@ func TestInvalidDevelopmentVersionNeverChecksOrReportsUpdate(t *testing.T) {
 	}
 }
 
+func TestPrereleaseBuildNeverAdvertisesAnUpgrade(t *testing.T) {
+	called := false
+	client := roundTripFunc(func(*http.Request) (*http.Response, error) {
+		called = true
+		return nil, errors.New("must not be called")
+	})
+	// parseSemver accepts these, but internal/updater.NormalizeTargetVersion rejects
+	// them, so the one-click upgrade could never run. Offering it anyway was a real
+	// defect with builds versioned 0.7.2-ei.N.
+	for _, version := range []string{"0.7.2-ei.11", "0.7.2-rc.1", "v0.8.0-beta"} {
+		svc := New(Options{CurrentVersion: version, Client: client})
+		status := svc.Check(context.Background())
+		if status.CheckStatus != StatusUnavailable || status.UpdateAvailable || status.LatestVersion != "" {
+			t.Fatalf("prerelease version %q status = %+v", version, status)
+		}
+	}
+	if called {
+		t.Fatal("prerelease current version triggered a network request")
+	}
+}
+
 func TestDefaultClientUsesNetDNSFallbackTransport(t *testing.T) {
 	svc := New(Options{CurrentVersion: "1.0.0"})
 	client, ok := svc.client.(*http.Client)

@@ -156,6 +156,22 @@ func (s *Service) Check(ctx context.Context) Status {
 		s.mu.Unlock()
 		return status
 	}
+	if len(current.prerelease) > 0 {
+		// A prerelease build must not advertise an upgrade it can never apply. The
+		// one-click updater only accepts exact stable versions
+		// (internal/updater.NormalizeTargetVersion rejects a prerelease suffix), so
+		// reporting one here would promise an action that always fails. This was a
+		// real defect: builds versioned 0.7.2-ei.N showed an available upgrade while
+		// the apply was refused with invalid_target_version on every attempt. This
+		// parser is deliberately more permissive than the updater's, so the guard has
+		// to live here.
+		s.mu.Lock()
+		s.status.CheckStatus = StatusUnavailable
+		s.status.CheckError = "当前构建不是正式版本号，无法执行面板内一键升级"
+		status := s.status
+		s.mu.Unlock()
+		return status
+	}
 
 	s.mu.Lock()
 	s.status.CheckStatus = StatusChecking

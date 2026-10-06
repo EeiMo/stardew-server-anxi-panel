@@ -2523,3 +2523,18 @@ Junimo/auth dry-run 在拉取后将 tag 解析出的 RepoDigest 与矩阵逐项�
 - `GameLibrary.tsx` 世界卡片按当前启用存档的 farmType 选择八种内置农场素材；首次加载、无存档、未知地图及读取/图片失败时显示标准农场。管理员自定义地图可读取已有 farm catalog 图标；实例状态更新时重新读取存档。
 - 名称旁 13px 铅笔，管理员点击可行内修改，Enter/保存提交、Esc/取消退出，失败保留输入并显示错误。`PATCH /api/instances/:id` 只改名称和更新时间，复用管理员权限与审计，校验 1–40 字及控制字符；storage.RenameInstance 不改变目录、ID、存档与运行状态。
 - `TestInstanceRenamePersistsNameAndPreservesRuntime` 验证未登录、非法名称、持久化与运行状态保留；前端游戏库回归和 production build 通过。Browser 夹具森林地图来源、铅笔行内输入、Enter 保存已验收。后续注意自定义图标遵循已有目录权限，普通用户不显示改名入口。
+
+## 2026-10-06 新建存档缺陷链修复
+
+修复 v0.7.2 线上实例命中的新建存档问题，完整记录见
+`docs/backend-handoff/backend-handoff-2026-10-06.md`。
+
+- `saves.go` 新增 `RepairGameloaderPointer`：把 JunimoServer 写错的
+  `junimohost.gameloader.json` 农场名前缀在磁盘上修正为真实目录名。
+  `lifecycle.go` 的 `doStart` 在 `docker compose up` 之前调用；不修的话，
+  启动会因指针指向不存在的目录而**静默新建第二个农场**。
+- `new_game_durability.go`：`sameGameSaveIdentity` 让 Control 身份校验接受
+  "同 uniqueID、不同农场名前缀"的存档名；`IdentitySettleWindow`（默认 90s）让既非
+  事务目标也非旧基线的 `save-loaded` 快照在窗口内重试，而不是第一次观测就终态失败。
+
+HTTP 接口与错误码集合没有变化。

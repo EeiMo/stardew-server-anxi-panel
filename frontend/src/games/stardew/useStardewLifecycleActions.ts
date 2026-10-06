@@ -44,7 +44,14 @@ export function useStardewLifecycleActions({ instanceState, dashboardData, isAdm
   const showSaveRequiredPrompt =
     (state === 'save_required' || saveRequiredDetected || noSavesDetected) && !isRunning && !isStarting
 
-  const canStart = isAdmin && isStopped && !actionBusy && !startupInProgress && !waitingForStop && !restartInProgress
+  // An instance parked in `error` still has a fully valid backend start path:
+  // the start handler re-validates installation and the active save and answers
+  // with a specific conflict code when it cannot proceed. Exposing start here is
+  // what makes `new_game_recovery_required` and similar states recoverable from
+  // the UI at all — the documented recovery is "start again to resume the same
+  // transaction", which is unreachable while every lifecycle control is hidden.
+  const errorStateRecoverable = state === 'error'
+  const canStart = isAdmin && (isStopped || errorStateRecoverable) && !actionBusy && !startupInProgress && !waitingForStop && !restartInProgress
   const canStop = isAdmin && isRunning && !actionBusy && !waitingForStop && !restartInProgress
   const canRestart = isAdmin && isRunning && !actionBusy && !waitingForStop && !restartInProgress
 

@@ -922,6 +922,94 @@ func TestGetActiveSaveName_AmbiguousSuffixNotRecovered(t *testing.T) {
 	}
 }
 
+func readGameloaderPointerForTest(t *testing.T, dir string) string {
+	t.Helper()
+	raw, err := os.ReadFile(filepath.Join(dir, ".local-container", "saves", ".smapi", "mod-data", "junimohost.server", "junimohost.gameloader.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var pointer struct {
+		SaveNameToLoad string `json:"SaveNameToLoad"`
+	}
+	if err := json.Unmarshal(raw, &pointer); err != nil {
+		t.Fatal(err)
+	}
+	return pointer.SaveNameToLoad
+}
+
+// RepairGameloaderPointer is what stops a start from silently creating a second
+// world: the panel's readers tolerate the wrong farm-name prefix, but
+// JunimoServer reads the pointer directly and creates a brand-new farm whenever
+// it names a folder that does not exist.
+func TestRepairGameloaderPointer_RewritesWrongPrefixOnDisk(t *testing.T) {
+	dir := t.TempDir()
+	savesRoot := filepath.Join(dir, ".local-container", "saves", "Saves")
+	if err := os.MkdirAll(filepath.Join(savesRoot, "test2_443102605"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := SetActiveSave(dir, "test_443102605"); err != nil {
+		t.Fatal(err)
+	}
+
+	name, changed, err := RepairGameloaderPointer(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !changed || name != "test2_443102605" {
+		t.Fatalf("repair = (%q, %t), want (test2_443102605, true)", name, changed)
+	}
+	if got := readGameloaderPointerForTest(t, dir); got != "test2_443102605" {
+		t.Fatalf("pointer file = %q, want test2_443102605", got)
+	}
+	// Repairing an already-correct pointer is a no-op.
+	again, changedAgain, err := RepairGameloaderPointer(dir)
+	if err != nil || changedAgain || again != "test2_443102605" {
+		t.Fatalf("second repair = (%q, %t, %v), want (test2_443102605, false, nil)", again, changedAgain, err)
+	}
+}
+
+func TestRepairGameloaderPointer_LeavesAmbiguousPointerUntouched(t *testing.T) {
+	dir := t.TempDir()
+	savesRoot := filepath.Join(dir, ".local-container", "saves", "Saves")
+	for _, name := range []string{"test2_443102605", "test3_443102605"} {
+		if err := os.MkdirAll(filepath.Join(savesRoot, name), 0o755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := SetActiveSave(dir, "test_443102605"); err != nil {
+		t.Fatal(err)
+	}
+
+	name, changed, err := RepairGameloaderPointer(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if changed || name != "test_443102605" {
+		t.Fatalf("repair = (%q, %t), want the ambiguous pointer left untouched", name, changed)
+	}
+	if got := readGameloaderPointerForTest(t, dir); got != "test_443102605" {
+		t.Fatalf("pointer file = %q, want the original ambiguous pointer", got)
+	}
+}
+
+func TestRepairGameloaderPointer_NoopWhenPointerResolves(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, ".local-container", "saves", "Saves", "TestSave"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := SetActiveSave(dir, "TestSave"); err != nil {
+		t.Fatal(err)
+	}
+
+	name, changed, err := RepairGameloaderPointer(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if changed || name != "TestSave" {
+		t.Fatalf("repair = (%q, %t), want (TestSave, false)", name, changed)
+	}
+}
+
 func TestValidateSaveExists(t *testing.T) {
 	dir := t.TempDir()
 	savePath := filepath.Join(dir, ".local-container", "saves", "Saves", "RealSave")

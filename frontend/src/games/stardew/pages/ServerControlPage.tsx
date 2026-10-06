@@ -64,8 +64,15 @@ export function ServerControlPage({ user, instanceState, dashboardData, onNaviga
       : dashboardData.loading
         ? '读取中…'
         : '未知'
+  // `error` is included so a recoverable failure always has a reachable
+  // control. The documented recovery for new_game_recovery_required is
+  // "start again to resume the same transaction", and the backend start handler
+  // re-validates installation and saves, answering with a specific conflict
+  // message when it genuinely cannot proceed. Hiding every lifecycle control in
+  // the error state turned a recoverable instance into a dead end.
   const showStartControl = !waitingForStop && !restartInProgress && (
-    startupInProgress || showSaveRequiredPrompt || state === 'ready_to_start' || state === 'stopped' || state === 'game_installed'
+    startupInProgress || showSaveRequiredPrompt || state === 'ready_to_start' || state === 'stopped'
+    || state === 'game_installed' || state === 'error'
   )
   const lifecycleDotClass = restartInProgress || isStarting || startupInProgress || waitingForStop
     ? 'sd-dot sd-dot-yellow sd-dot-pulse'
@@ -231,7 +238,9 @@ export function ServerControlPage({ user, instanceState, dashboardData, onNaviga
                     ? '服务器启动中，正在加载存档'
                     : isRunning
                       ? '服务器已运行'
-                      : '启动服务器'
+                      : state === 'error'
+                        ? '尝试恢复启动；面板会先校验安装与存档，无法继续时会给出具体原因'
+                        : '启动服务器'
               }
             >
               {startupInProgress ? (
@@ -329,7 +338,9 @@ export function ServerControlPage({ user, instanceState, dashboardData, onNaviga
 
         {state && !isRunning && !isStopped && !isStarting && !showSaveRequiredPrompt ? (
           <div className="sd-srv-hint" style={{ marginTop: 4 }}>
-            当前状态（{stateLabelText}）下无法直接启动服务器，请先完成安装或选择存档。
+            {state === 'error'
+              ? '当前状态（错误）下仍可尝试「启动」恢复；面板会先校验安装与存档，无法继续时会给出具体原因。'
+              : `当前状态（${stateLabelText}）下无法直接启动服务器，请先完成安装或选择存档。`}
           </div>
         ) : null}
       </div>

@@ -146,13 +146,11 @@ export function ServerSummaryCard({
 
       <div className="sd-server-summary-invite sd-server-summary-connections">
         <LanDirectConnectCard dashboardData={dashboardData} />
-        {instanceState?.steamInviteEnabled === true ? (
-          <InviteCodeCard
-            instanceState={instanceState}
-            dashboardData={dashboardData}
-            canManageSteamInvite={canEditPlayerLimit}
-          />
-        ) : null}
+        <InviteCodeCard
+          instanceState={instanceState}
+          dashboardData={dashboardData}
+          canManageSteamInvite={canEditPlayerLimit}
+        />
       </div>
     </div>
   )

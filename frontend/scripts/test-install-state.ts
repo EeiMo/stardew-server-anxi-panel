@@ -164,18 +164,27 @@ assert.equal(shouldPollSteamInvite(
   null,
   'auth_unavailable',
 ), false)
-assert.equal(steamInvitePresentation(false, 'disabled', null, null).text, '')
+// A fresh instance has not opted in yet. The presentation must advertise that
+// explicitly instead of returning an empty string, because the card is now
+// always rendered so an administrator keeps a reachable way to enable the
+// optional capability.
+const disabledInvitePresentation = steamInvitePresentation(false, 'disabled', null, null)
+assert.equal(disabledInvitePresentation.text, '未启用')
+assert.equal(disabledInvitePresentation.needsEnable, true)
+assert.equal(disabledInvitePresentation.copyable, false)
+assert.equal(disabledInvitePresentation.retryAuthorization, false)
+assert.equal(steamInvitePresentation(true, 'ready', 'ANXI-CODE', null).needsEnable, false)
 assert.deepEqual(
   steamInvitePresentation(true, 'waiting_authorization', null, null),
-  { text: '等待 Steam 授权', copyable: false, retryAuthorization: true, tone: 'muted' },
+  { text: '等待 Steam 授权', copyable: false, retryAuthorization: true, needsEnable: false, tone: 'muted' },
 )
 assert.deepEqual(
   steamInvitePresentation(true, 'authorization_failed', null, null, 'failed'),
-  { text: '授权失败，可重试', copyable: false, retryAuthorization: true, tone: 'error' },
+  { text: '授权失败，可重试', copyable: false, retryAuthorization: true, needsEnable: false, tone: 'error' },
 )
 assert.deepEqual(
   steamInvitePresentation(true, 'auth_unavailable', null, 'holder cleanup failed', 'cleanup_pending'),
-  { text: '等待中…', copyable: false, retryAuthorization: false, tone: 'loading' },
+  { text: '等待中…', copyable: false, retryAuthorization: false, needsEnable: false, tone: 'loading' },
 )
 assert.equal(steamInvitePresentation(true, 'server_stopped', null, null).text, '服务器未运行')
 assert.equal(steamInvitePresentation(true, 'generating', null, null).text, '等待中…')
@@ -183,15 +192,15 @@ assert.equal(steamInvitePresentation(true, 'ready', 'ANXI-CODE', null).copyable,
 assert.equal(steamInvitePresentation(true, 'auth_unavailable', null, null).text, 'Auth 异常（直连仍可用）')
 assert.deepEqual(
   steamInvitePresentation(true, 'auth_unavailable', null, 'container starting', 'ready', 'starting', true),
-  { text: 'Auth 异常（直连仍可用）', copyable: false, retryAuthorization: true, tone: 'error' },
+  { text: 'Auth 异常（直连仍可用）', copyable: false, retryAuthorization: true, needsEnable: false, tone: 'error' },
 )
 assert.deepEqual(
   steamInvitePresentation(true, 'auth_unavailable', null, 'container starting', 'ready', 'running', true),
-  { text: 'Auth 异常（直连仍可用）', copyable: false, retryAuthorization: true, tone: 'error' },
+  { text: 'Auth 异常（直连仍可用）', copyable: false, retryAuthorization: true, needsEnable: false, tone: 'error' },
 )
 assert.deepEqual(
   steamInvitePresentation(true, 'generating', null, 'temporary network error', 'ready', 'running', true),
-  { text: '等待中…', copyable: false, retryAuthorization: false, tone: 'loading' },
+  { text: '等待中…', copyable: false, retryAuthorization: false, needsEnable: false, tone: 'loading' },
 )
 assert.equal(
   steamInvitePresentation(true, 'auth_unavailable', null, 'runtime failure', 'ready', 'running').text,

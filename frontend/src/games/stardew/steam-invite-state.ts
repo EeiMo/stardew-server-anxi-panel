@@ -4,6 +4,11 @@ export type SteamInvitePresentation = {
   text: string
   copyable: boolean
   retryAuthorization: boolean
+  // The optional Steam invite capability has not been opted in for this
+  // instance yet. Callers render an explicit enable affordance for
+  // administrators instead of hiding the whole card, so the feature always has
+  // a reachable way to be turned on.
+  needsEnable: boolean
   tone: 'normal' | 'loading' | 'muted' | 'error'
 }
 
@@ -89,35 +94,35 @@ export function steamInvitePresentation(
   polling = false,
 ): SteamInvitePresentation {
   if (!enabled) {
-    return { text: '', copyable: false, retryAuthorization: false, tone: 'muted' }
+    return { text: '未启用', copyable: false, retryAuthorization: false, needsEnable: true, tone: 'muted' }
   }
   if (inviteCode) {
-    return { text: inviteCode, copyable: true, retryAuthorization: false, tone: 'normal' }
+    return { text: inviteCode, copyable: true, retryAuthorization: false, needsEnable: false, tone: 'normal' }
   }
   if (status === 'authorization_failed' || authState === 'failed') {
-    return { text: '授权失败，可重试', copyable: false, retryAuthorization: true, tone: 'error' }
+    return { text: '授权失败，可重试', copyable: false, retryAuthorization: true, needsEnable: false, tone: 'error' }
   }
   if (authState === 'cleanup_pending') {
-    return { text: '等待中…', copyable: false, retryAuthorization: false, tone: 'loading' }
+    return { text: '等待中…', copyable: false, retryAuthorization: false, needsEnable: false, tone: 'loading' }
   }
   if (status === 'auth_unavailable') {
-    return { text: 'Auth 异常（直连仍可用）', copyable: false, retryAuthorization: true, tone: 'error' }
+    return { text: 'Auth 异常（直连仍可用）', copyable: false, retryAuthorization: true, needsEnable: false, tone: 'error' }
   }
   if (polling && error && status === 'generating'
     && (runtimeState === 'starting' || (runtimeState === 'running' && authState === 'ready'))) {
-    return { text: '等待中…', copyable: false, retryAuthorization: false, tone: 'loading' }
+    return { text: '等待中…', copyable: false, retryAuthorization: false, needsEnable: false, tone: 'loading' }
   }
   if (error) {
-    return { text: 'Auth 异常（直连仍可用）', copyable: false, retryAuthorization: true, tone: 'error' }
+    return { text: 'Auth 异常（直连仍可用）', copyable: false, retryAuthorization: true, needsEnable: false, tone: 'error' }
   }
   if (status === 'waiting_authorization' || authState === 'pending') {
-    return { text: '等待 Steam 授权', copyable: false, retryAuthorization: true, tone: 'muted' }
+    return { text: '等待 Steam 授权', copyable: false, retryAuthorization: true, needsEnable: false, tone: 'muted' }
   }
   if (authState === 'authorizing') {
-    return { text: '正在授权…', copyable: false, retryAuthorization: false, tone: 'loading' }
+    return { text: '正在授权…', copyable: false, retryAuthorization: false, needsEnable: false, tone: 'loading' }
   }
   if (status === 'server_stopped') {
-    return { text: '服务器未运行', copyable: false, retryAuthorization: false, tone: 'muted' }
+    return { text: '服务器未运行', copyable: false, retryAuthorization: false, needsEnable: false, tone: 'muted' }
   }
-  return { text: '等待中…', copyable: false, retryAuthorization: false, tone: 'loading' }
+  return { text: '等待中…', copyable: false, retryAuthorization: false, needsEnable: false, tone: 'loading' }
 }

@@ -2111,3 +2111,14 @@ Control `0.3.1` 是该契约的最低内嵌实现。运行栈清单、两份 man
 - `SettingsPage.tsx` 按 `isActive` 切换红色「禁用」与绿色「启用」，启用确认后由 `api.ts` 的 `enableUser` 调用既有 `PATCH /api/users/:id { isActive: true }`，成功重新读取列表；自身及管理员目标权限保护沿用。确认期间禁用按钮与 Escape 关闭，错误保留原列表并展示反馈。
 - `SettingsPage.css` 移除整张停用卡片的透明度，保留背景和「已禁用」标记，让可用操作保持清晰。无后端/数据库契约变更。
 - `qa-layout-main.tsx?userQa=activation` 提供隔离用户 4 的启停夹具：Browser 实测启用、加载锁定、变回禁用、再次禁用与恢复启用入口通过，控制台无警告/错误。后端 `TestAdminCanEnableAndHardDeleteUser`、`TestSuperAdminControlsAdminRoleManagement`、`TestLastAdminCannotBeDisabledOrDowngraded`，前端响应式回归和 production build 通过。真实账号未修改；后续发布抽验权限拒绝及错误重试。
+
+## 2026-10-06 邀请码启用与实例恢复的契约收敛
+
+- `POST /api/instances/:id/steam-auth/login` 的语义被明确为"记录显式启用意图"。
+  前端现在在 `steamInviteEnabled=false` 时也渲染卡片并提供「启用」入口，
+  不再依赖"卡片可见 ⇒ 已启用"这一隐含假设。
+- `POST /api/instances/:id/start` 在 `state=error` 时从 UI 可达。该接口本就自行校验
+  安装与激活存档，无法继续时返回 `save_required` / `active_save_required` /
+  `active_save_missing`；前端据此把用户引导到存档页。
+- 后端新增的指针自愈与身份 settle 窗口不改变任何请求或响应结构，只影响同一实例内的
+  存档身份判定。

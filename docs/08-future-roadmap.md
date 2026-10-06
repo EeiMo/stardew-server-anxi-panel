@@ -2823,3 +2823,15 @@ Multi Game Mode later
 - `SettingsPage.tsx` 按 `isActive` 切换红色「禁用」与绿色「启用」，启用确认后由 `api.ts` 的 `enableUser` 调用既有 `PATCH /api/users/:id { isActive: true }`，成功重新读取列表；自身及管理员目标权限保护沿用。确认期间禁用按钮与 Escape 关闭，错误保留原列表并展示反馈。
 - `SettingsPage.css` 移除整张停用卡片的透明度，保留背景和「已禁用」标记，让可用操作保持清晰。无后端/数据库契约变更。
 - `qa-layout-main.tsx?userQa=activation` 提供隔离用户 4 的启停夹具：Browser 实测启用、加载锁定、变回禁用、再次禁用与恢复启用入口通过，控制台无警告/错误。后端 `TestAdminCanEnableAndHardDeleteUser`、`TestSuperAdminControlsAdminRoleManagement`、`TestLastAdminCannotBeDisabledOrDowngraded`，前端响应式回归和 production build 通过。真实账号未修改；后续发布抽验权限拒绝及错误重试。
+
+## 2026-10-06 状态变化
+
+- 已完成：新建存档 gameloader 指针自愈；Control 身份校验的后缀容错与有界 settle 窗口；
+  Steam 邀请码启用入口（总览 / 服务器 / 手机首页）；`error` 状态生命周期恢复入口。
+  详见 `docs/backend-handoff/backend-handoff-2026-10-06.md` 与
+  `docs/frontend-handoff/frontend-handoff-2026-10-06.md`。
+- 待跟进（上游）：JunimoServer 仍会向 `junimohost.gameloader.json` 写入错误的农场名
+  前缀。当前是面板侧兜底；建议向上游反馈，或在启动前检测到指针无法解析时安全失败，
+  而不是让游戏自行新建农场。
+- 待跟进（可观测性）：`new_game_target_ambiguous` 目前只能靠人工清理现场，
+  后续可考虑提供受控的现场导出与收敛入口。

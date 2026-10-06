@@ -20,6 +20,12 @@ import (
 
 const maxNewGameControlStatusBytes = 256 * 1024
 
+// newGameControlIdentitySettleWindow is how long a fresh SaveLoaded snapshot
+// that matches neither the transaction target nor the previous baseline is
+// treated as "Control has not published the new identity yet" before the
+// mismatch becomes terminal.
+const newGameControlIdentitySettleWindow = 90 * time.Second
+
 type newGameCoreCustomization struct {
 	FarmerName    string           `json:"farmerName"`
 	FarmName      string           `json:"farmName"`
@@ -98,6 +104,15 @@ type newGameControlDurabilityWaitOptions struct {
 	// short time after a new candidate appears; only this exact old identity is
 	// pending rather than a terminal target mismatch.
 	PreviousSaveID string
+	// IdentitySettleWindow bounds how long a fresh SaveLoaded snapshot that
+	// belongs to neither the transaction target nor the pre-command baseline is
+	// treated as "Control has not published the new identity yet" instead of a
+	// terminal mismatch. Control's status file is written by a polled mod, so an
+	// intermediate SaveLoaded snapshot is expected while the new world is still
+	// loading; failing on the very first observation aborts a new-game
+	// transaction whose save was in fact created correctly. Zero uses
+	// newGameControlIdentitySettleWindow; a negative value restores fail-fast.
+	IdentitySettleWindow time.Duration
 }
 
 type newGameDurableSaveOptions struct {
@@ -144,10 +159,42 @@ func readNewGameControlDurabilityStatus(dataDir string) (newGameControlDurabilit
 	return status, nil
 }
 
+// saveUniqueIDSuffix returns the trailing "_<uniqueID>" digits of a Stardew
+// save folder name, which JunimoServer always generates correctly even when it
+// writes the wrong farm-name prefix in front of them.
+func saveUniqueIDSuffix(name string) (string, bool) {
+	idx := strings.LastIndex(name, "_")
+	if idx < 0 || idx == len(name)-1 {
+		return "", false
+	}
+	suffix := name[idx+1:]
+	if _, err := strconv.ParseUint(suffix, 10, 64); err != nil {
+		return "", false
+	}
+	return suffix, true
+}
+
+// sameGameSaveIdentity reports whether two save names denote the same world.
+// JunimoServer occasionally writes a gameloader pointer, and therefore reports
+// a Control saveId, with the wrong farm-name prefix while keeping the correctly
+// generated unique numeric suffix (e.g. pointer "EM_443102605" for the real
+// folder "Farm_443102605"). Identity checks must compare that unique suffix
+// instead of the raw folder text, otherwise a correctly created world is
+// rejected as a foreign SaveLoaded snapshot.
+func sameGameSaveIdentity(left, right string) bool {
+	if left == right {
+		return true
+	}
+	leftSuffix, leftOK := saveUniqueIDSuffix(left)
+	rightSuffix, rightOK := saveUniqueIDSuffix(right)
+	return leftOK && rightOK && leftSuffix == rightSuffix
+}
+
 // inspectNewGameControlDurability returns ready=false for evidence that can
 // legitimately advance (missing, stale, or a pre-SaveLoaded state). Once a
-// fresh SaveLoaded snapshot exists, every identity and customization mismatch
-// is terminal so callers never save an incorrectly customized world.
+// fresh SaveLoaded snapshot exists for the transaction target, every
+// customization mismatch is terminal so callers never save an incorrectly
+// customized world.
 func inspectNewGameControlDurability(
 	dataDir string,
 	transactionID string,
@@ -208,7 +255,7 @@ func inspectNewGameControlDurability(
 	if status.State != "save-loaded" {
 		return status, false, nil
 	}
-	if status.NewGameTransactionID != transactionID || status.SaveID != saveID {
+	if status.NewGameTransactionID != transactionID || !sameGameSaveIdentity(status.SaveID, saveID) {
 		return status, false, &NewGameTransactionError{
 			Code:    "new_game_control_identity_mismatch",
 			Message: "Control 的 SaveLoaded 状态不属于当前新建存档事务或目标存档",
@@ -226,7 +273,7 @@ func inspectNewGameControlDurability(
 			Message: "Control 的角色定制复核时间不属于当前 SaveLoaded 状态",
 		}
 	}
-	if status.CustomizationTransactionID != transactionID || status.CustomizationSaveID != saveID {
+	if status.CustomizationTransactionID != transactionID || !sameGameSaveIdentity(status.CustomizationSaveID, saveID) {
 		return status, false, &NewGameTransactionError{
 			Code:    "new_game_control_customization_identity_mismatch",
 			Message: "Control 的角色定制快照未冻结到当前事务和目标存档",
@@ -248,7 +295,7 @@ func inspectNewGameControlDurability(
 			Message: "Control 的农场山洞选择复核时间不属于当前 SaveLoaded 状态",
 		}
 	}
-	if status.FarmCaveChoiceTransactionID != transactionID || status.FarmCaveChoiceSaveID != saveID {
+	if status.FarmCaveChoiceTransactionID != transactionID || !sameGameSaveIdentity(status.FarmCaveChoiceSaveID, saveID) {
 		return status, false, &NewGameTransactionError{
 			Code:    "new_game_control_farm_cave_identity_mismatch",
 			Message: "Control 的农场山洞选择快照未冻结到当前事务和目标存档",
@@ -267,7 +314,7 @@ func inspectNewGameControlDurability(
 		}
 		return status, false, err
 	}
-	if players.SaveID != saveID || players.UpdatedAt.IsZero() || players.UpdatedAt.Before(*status.CustomizationVerifiedAt) {
+	if !sameGameSaveIdentity(players.SaveID, saveID) || players.UpdatedAt.IsZero() || players.UpdatedAt.Before(*status.CustomizationVerifiedAt) {
 		return status, false, nil
 	}
 	hosts := 0
@@ -320,11 +367,15 @@ func waitForNewGameControlDurability(
 	if options.PollInterval <= 0 {
 		options.PollInterval = 250 * time.Millisecond
 	}
+	if options.IdentitySettleWindow == 0 {
+		options.IdentitySettleWindow = newGameControlIdentitySettleWindow
+	}
 	deadline := time.NewTimer(options.Timeout)
 	defer deadline.Stop()
 	ticker := time.NewTicker(options.PollInterval)
 	defer ticker.Stop()
 	var latest newGameControlDurabilityStatus
+	settleStartedAt := time.Time{}
 	for {
 		if err := ctx.Err(); err != nil {
 			return latest, err
@@ -334,13 +385,29 @@ func waitForNewGameControlDurability(
 		)
 		latest = status
 		var txErr *NewGameTransactionError
-		if errors.As(err, &txErr) && txErr.Code == "new_game_control_identity_mismatch" &&
-			options.PreviousSaveID != "" && status.NewGameTransactionID == transactionID &&
-			status.SaveID == options.PreviousSaveID {
-			// The exact pre-/newgame baseline is allowed to age out naturally.
-			// Any other SaveLoaded identity remains a terminal mismatch.
-			err = nil
-			ready = false
+		if errors.As(err, &txErr) && txErr.Code == "new_game_control_identity_mismatch" {
+			if options.PreviousSaveID != "" && status.NewGameTransactionID == transactionID &&
+				sameGameSaveIdentity(status.SaveID, options.PreviousSaveID) {
+				// The exact pre-/newgame baseline is allowed to age out naturally.
+				err = nil
+				ready = false
+				settleStartedAt = time.Time{}
+			} else if options.IdentitySettleWindow > 0 {
+				// Control's status file is written by a polled mod, so a fresh
+				// SaveLoaded snapshot that belongs to neither the target nor the
+				// previous baseline is expected while the new world finishes
+				// loading. Retry inside a bounded window before treating the
+				// mismatch as terminal; it stays fatal once the window elapses.
+				if settleStartedAt.IsZero() {
+					settleStartedAt = time.Now()
+				}
+				if time.Since(settleStartedAt) < options.IdentitySettleWindow {
+					err = nil
+					ready = false
+				}
+			}
+		} else {
+			settleStartedAt = time.Time{}
 		}
 		if err != nil {
 			return status, err

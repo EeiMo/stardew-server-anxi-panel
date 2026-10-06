@@ -3330,3 +3330,16 @@ npm.cmd run dev
 - `SettingsPage.tsx` 按 `isActive` 切换红色「禁用」与绿色「启用」，启用确认后由 `api.ts` 的 `enableUser` 调用既有 `PATCH /api/users/:id { isActive: true }`，成功重新读取列表；自身及管理员目标权限保护沿用。确认期间禁用按钮与 Escape 关闭，错误保留原列表并展示反馈。
 - `SettingsPage.css` 移除整张停用卡片的透明度，保留背景和「已禁用」标记，让可用操作保持清晰。无后端/数据库契约变更。
 - `qa-layout-main.tsx?userQa=activation` 提供隔离用户 4 的启停夹具：Browser 实测启用、加载锁定、变回禁用、再次禁用与恢复启用入口通过，控制台无警告/错误。后端 `TestAdminCanEnableAndHardDeleteUser`、`TestSuperAdminControlsAdminRoleManagement`、`TestLastAdminCannotBeDisabledOrDowngraded`，前端响应式回归和 production build 通过。真实账号未修改；后续发布抽验权限拒绝及错误重试。
+
+## 2026-10-06 邀请码启用入口与 error 状态恢复
+
+详见 `docs/frontend-handoff/frontend-handoff-2026-10-06.md`。
+
+- `steam-invite-state.ts` 的 `SteamInvitePresentation` 新增必填字段 `needsEnable`；
+  未启用时返回「未启用」而不是空文案。
+- `InviteCodeCard` 取消 `if (!enabled) return null` 自锁，对管理员渲染「启用」按钮；
+  `pages/OverviewPage.tsx`、`ServerSummaryCard.tsx`、`mobile/MobileHomePage.tsx`
+  三处调用点同步移除 `steamInviteEnabled` 门禁。轮询语义不变：未启用实例仍不会
+  请求或轮询邀请码。
+- `useStardewLifecycleActions.canStart` 与 `ServerControlPage.showStartControl`
+  允许 `state === 'error'`，使 `new_game_recovery_required` 可以从 UI 恢复。

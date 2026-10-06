@@ -966,6 +966,19 @@ func (r *lifecycleRunner) doStart(ctx context.Context, jobCtx *jobs.Context) (re
 	}
 	r.driver.rememberInstallationEvidence(r.instance.ID, "ok")
 
+	// JunimoServer writes junimohost.gameloader.json with the wrong farm-name
+	// prefix while keeping the correct unique numeric suffix, and it does not
+	// tolerate that mismatch itself: when the pointer names a folder that does
+	// not exist it silently creates a brand-new farm on this start. The panel's
+	// own readers already tolerate the mismatch, so repairing the file here is
+	// what stops a start from producing an unintended second world. Repair is
+	// best effort and never blocks an otherwise valid start.
+	if repaired, changed, repairErr := RepairGameloaderPointer(r.instance.DataDir); repairErr != nil {
+		_, _ = jobCtx.Info(ctx, "warning: 修正新存档指针失败："+paneldocker.RedactString(repairErr.Error()))
+	} else if changed {
+		_, _ = jobCtx.Info(ctx, "已修正新存档指针（JunimoServer 写入了错误的农场名前缀）："+repaired)
+	}
+
 	var newGameTx *newGameTransaction
 	var newGameSelection *NewGameModSelection
 	composeStarted := false

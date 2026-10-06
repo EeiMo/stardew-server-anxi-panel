@@ -153,6 +153,108 @@ func TestWaitForNewGameControlDurabilityRequiresExactFreshEvidence(t *testing.T)
 	}
 }
 
+func TestSameGameSaveIdentityToleratesWrongFarmPrefix(t *testing.T) {
+	tests := []struct {
+		name  string
+		left  string
+		right string
+		want  bool
+	}{
+		{name: "exact", left: "Farm_123", right: "Farm_123", want: true},
+		{name: "wrong farm prefix", left: "EM_3935490074948765276", right: "Farm_3935490074948765276", want: true},
+		{name: "different unique id", left: "Farm_123", right: "Farm_456", want: false},
+		{name: "missing suffix on one side", left: "Farm", right: "Farm_123", want: false},
+		{name: "non numeric suffix equal", left: "Farm_a", right: "Farm_a", want: true},
+		{name: "non numeric suffix differs", left: "Farm_a", right: "Other_a", want: false},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if got := sameGameSaveIdentity(test.left, test.right); got != test.want {
+				t.Fatalf("sameGameSaveIdentity(%q, %q) = %t, want %t", test.left, test.right, got, test.want)
+			}
+		})
+	}
+}
+
+// Control's status file is written by a polled mod, so a fresh SaveLoaded
+// snapshot that belongs to neither the transaction target nor the pre-command
+// baseline is expected while the new world is still loading. Failing on the very
+// first observation used to abort a new-game transaction whose save had in fact
+// been created correctly.
+func TestWaitForNewGameControlDurabilitySettlesTransientIdentityMismatch(t *testing.T) {
+	dataDir := t.TempDir()
+	txID := strings.Repeat("d", 32)
+	targetSaveID := "Fresh_456"
+	cfg := newGameDurabilityTestConfig()
+	freshAfter := time.Now().UTC().Add(-time.Second)
+
+	foreign := exactNewGameControlStatus(txID, "Foreign_999", cfg, time.Now().UTC())
+	if err := writeNewGameJSONAtomicForTest(context.Background(), filepath.Join(controlDir(dataDir), "status.json"), foreign); err != nil {
+		t.Fatal(err)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	done := make(chan error, 1)
+	go func() {
+		timer := time.NewTimer(30 * time.Millisecond)
+		defer timer.Stop()
+		select {
+		case <-ctx.Done():
+			done <- ctx.Err()
+			return
+		case <-timer.C:
+		}
+		target := exactNewGameControlStatus(txID, targetSaveID, cfg, time.Now().UTC())
+		if err := writeNewGameJSONAtomicForTest(ctx, filepath.Join(controlDir(dataDir), "status.json"), target); err != nil {
+			done <- err
+			return
+		}
+		players := map[string]any{
+			"updatedAt": target.CustomizationVerifiedAt.Add(time.Millisecond),
+			"saveId":    targetSaveID,
+			"players":   []map[string]any{{"name": cfg.FarmerName, "isHost": true}},
+		}
+		done <- writeNewGameJSONAtomicForTest(ctx, filepath.Join(controlDir(dataDir), "players.json"), players)
+	}()
+
+	status, err := waitForNewGameControlDurability(context.Background(), dataDir, txID, targetSaveID, cfg, newGameControlDurabilityWaitOptions{
+		Timeout: time.Second, PollInterval: 10 * time.Millisecond, FreshAfter: freshAfter,
+		PreviousSaveID: "Existing_123", IdentitySettleWindow: time.Second,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if writeErr := <-done; writeErr != nil {
+		t.Fatal(writeErr)
+	}
+	if status.SaveID != targetSaveID || status.NewGameTransactionID != txID {
+		t.Fatalf("accepted status = %+v", status)
+	}
+}
+
+// The settle window only delays the verdict. A mismatch that never converges
+// must still fail so an incorrectly customized world is never saved.
+func TestWaitForNewGameControlDurabilityRejectsPersistentIdentityMismatch(t *testing.T) {
+	dataDir := t.TempDir()
+	txID := strings.Repeat("e", 32)
+	targetSaveID := "Fresh_456"
+	cfg := newGameDurabilityTestConfig()
+	foreign := exactNewGameControlStatus(txID, "Foreign_999", cfg, time.Now().UTC())
+	if err := writeNewGameJSONAtomicForTest(context.Background(), filepath.Join(controlDir(dataDir), "status.json"), foreign); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err := waitForNewGameControlDurability(context.Background(), dataDir, txID, targetSaveID, cfg, newGameControlDurabilityWaitOptions{
+		Timeout: time.Second, PollInterval: 10 * time.Millisecond,
+		FreshAfter: time.Now().UTC().Add(-time.Second), IdentitySettleWindow: 40 * time.Millisecond,
+	})
+	var txErr *NewGameTransactionError
+	if !errors.As(err, &txErr) || txErr.Code != "new_game_control_identity_mismatch" {
+		t.Fatalf("err = %v, want new_game_control_identity_mismatch", err)
+	}
+}
+
 func TestWaitForNewGameControlDurabilityAllowsOnlyExactPreviousSaveBaselineToAdvance(t *testing.T) {
 	dataDir := t.TempDir()
 	txID := strings.Repeat("9", 32)

@@ -476,42 +476,67 @@ export function MobileHomePage({ user, instanceState, dashboardData, onUseDeskto
           <img src="/assets/stardew/ui/icons/icon_nav_server_rack_image2.png" alt="" />
           连接信息
         </div>
-        {steamInviteEnabled ? (
-          <>
-            <div className="sd-mhome-invite-row">
-              <span className="sd-mhome-invite-label">Steam 邀请码</span>
-              <div className={`sd-mhome-invite-box${invite.copyable ? '' : ' sd-mhome-invite-box--muted'}`}>
-                {inviteText}
-              </div>
-              {invite.retryAuthorization && isAdmin ? (
-                <button
-                  type="button"
-                  className="sd-btn-green sd-mhome-copy-btn"
-                  onClick={() => { void steamAuth.login() }}
-                  disabled={steamAuth.busy || steamAuth.requiresStop}
-                  title={steamAuth.title}
-                >
-                  {steamAuth.busy ? '发起中…' : '重新授权'}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="sd-btn-tan sd-mhome-copy-btn"
-                  onClick={handleCopyInvite}
-                  disabled={!invite.copyable}
-                  title={invite.copyable ? '复制 Steam 邀请码' : '暂无可复制的 Steam 邀请码'}
-                >
-                  {inviteCopied ? '已复制' : '复制'}
-                </button>
-              )}
-            </div>
-            {invite.retryAuthorization && isAdmin && steamAuth.requiresStop ? (
-              <div className="sd-notice sd-notice--info sd-mhome-notice">请先停止服务器，再重新完成 Steam 邀请码授权。</div>
-            ) : null}
-            {steamAuth.message ? (
-              <div className="sd-notice sd-notice--error sd-mhome-notice">{steamAuth.message}</div>
-            ) : null}
-          </>
+        <div className="sd-mhome-invite-row">
+          <span className="sd-mhome-invite-label">Steam 邀请码</span>
+          <div className={`sd-mhome-invite-box${invite.copyable ? '' : ' sd-mhome-invite-box--muted'}`}>
+            {inviteText}
+          </div>
+          {invite.needsEnable ? (
+            isAdmin ? (
+              <button
+                type="button"
+                className="sd-btn-green sd-mhome-copy-btn"
+                onClick={() => { void steamAuth.login() }}
+                disabled={steamAuth.busy || steamAuth.requiresStop}
+                title={steamAuth.title ?? '启用 Steam 邀请码（需要再次登录授权）'}
+              >
+                {steamAuth.busy ? '发起中…' : '启用'}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="sd-btn-tan sd-mhome-copy-btn"
+                disabled
+                title="请联系管理员启用 Steam 邀请码"
+              >
+                未启用
+              </button>
+            )
+          ) : invite.retryAuthorization && isAdmin ? (
+            <button
+              type="button"
+              className="sd-btn-green sd-mhome-copy-btn"
+              onClick={() => { void steamAuth.login() }}
+              disabled={steamAuth.busy || steamAuth.requiresStop}
+              title={steamAuth.title}
+            >
+              {steamAuth.busy ? '发起中…' : '重新授权'}
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="sd-btn-tan sd-mhome-copy-btn"
+              onClick={handleCopyInvite}
+              disabled={!invite.copyable}
+              title={invite.copyable ? '复制 Steam 邀请码' : '暂无可复制的 Steam 邀请码'}
+            >
+              {inviteCopied ? '已复制' : '复制'}
+            </button>
+          )}
+        </div>
+        {invite.needsEnable ? (
+          <div className="sd-notice sd-notice--info sd-mhome-notice">
+            {steamAuth.requiresStop
+              ? '请先停止服务器，再启用 Steam 邀请码；局域网/IP 直连始终可用。'
+              : isAdmin
+                ? 'Steam 邀请码尚未启用，点击「启用」并完成一次 Steam 登录授权即可；局域网/IP 直连始终可用。'
+                : 'Steam 邀请码尚未启用，请联系管理员开启；局域网/IP 直连始终可用。'}
+          </div>
+        ) : invite.retryAuthorization && isAdmin && steamAuth.requiresStop ? (
+          <div className="sd-notice sd-notice--info sd-mhome-notice">请先停止服务器，再重新完成 Steam 邀请码授权。</div>
+        ) : null}
+        {steamAuth.message ? (
+          <div className="sd-notice sd-notice--error sd-mhome-notice">{steamAuth.message}</div>
         ) : null}
         <div className="sd-mhome-invite-row">
           <span className="sd-mhome-invite-label">局域网直连</span>

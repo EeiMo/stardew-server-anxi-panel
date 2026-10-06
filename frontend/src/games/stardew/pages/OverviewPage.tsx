@@ -306,9 +306,7 @@ export function OverviewPage({ user, instanceId, instanceState, onNavigate, dash
         </div>
         <div className="sd-overview-connections">
           <LanDirectConnectCard dashboardData={dashboardData} />
-          {instanceState?.steamInviteEnabled === true ? (
-            <InviteCodeCard instanceState={instanceState} dashboardData={dashboardData} canManageSteamInvite={isAdmin} onNavigate={onNavigate} />
-          ) : null}
+          <InviteCodeCard instanceState={instanceState} dashboardData={dashboardData} canManageSteamInvite={isAdmin} onNavigate={onNavigate} />
         </div>
         {actionError ? <p className="sd-overview-error" role="alert">{jobErrorSummary(actionError)}</p> : null}
       </section>

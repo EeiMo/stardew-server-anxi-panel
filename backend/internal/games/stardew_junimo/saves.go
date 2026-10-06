@@ -228,6 +228,52 @@ func suffixMatchSaveDir(dataDir, pointerName string) string {
 	return match
 }
 
+// RepairGameloaderPointer rewrites junimohost.gameloader.json when it names a
+// save folder that does not exist but exactly one existing folder shares the
+// same trailing "_<uniqueID>" suffix.
+//
+// suffixMatchSaveDir already lets the panel's own readers tolerate the wrong
+// farm-name prefix JunimoServer writes there, but JunimoServer reads the
+// pointer directly and does not tolerate it: leaving the file unrepaired makes
+// the next start silently create a brand-new farm instead of loading the save
+// the user selected. Rewriting the pointer is therefore required, not cosmetic.
+//
+// Returns the effective save name and whether the on-disk pointer was rewritten.
+func RepairGameloaderPointer(dataDir string) (string, bool, error) {
+	pointerPath := filepath.Join(savesDir(dataDir), ".smapi", "mod-data", "junimohost.server", "junimohost.gameloader.json")
+	raw, err := os.ReadFile(pointerPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return "", false, nil
+		}
+		return "", false, err
+	}
+	var cfg struct {
+		SaveNameToLoad string `json:"SaveNameToLoad"`
+	}
+	if err := json.Unmarshal(raw, &cfg); err != nil {
+		return "", false, err
+	}
+	name := strings.TrimSpace(cfg.SaveNameToLoad)
+	if name == "" {
+		return "", false, nil
+	}
+	if _, statErr := os.Stat(filepath.Join(savesDir(dataDir), "Saves", name)); statErr == nil {
+		return name, false, nil
+	}
+	fixed := suffixMatchSaveDir(dataDir, name)
+	if fixed == "" || fixed == name {
+		return name, false, nil
+	}
+	if err := validateSaveName(fixed); err != nil {
+		return name, false, nil
+	}
+	if err := writeGameloaderPointer(dataDir, fixed); err != nil {
+		return name, false, err
+	}
+	return fixed, true, nil
+}
+
 // readSaveInfo reads metadata from a single save folder and returns a SaveInfo.
 // On XML parse error, ParseError is set and other fields are best-effort.
 // Supports two XML structures:

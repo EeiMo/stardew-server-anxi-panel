@@ -66,7 +66,7 @@ class CompatibilityMatrixTests(unittest.TestCase):
 
     def test_required_remote_image_policy(self):
         self.assertTrue(MATRIX.required_remote_image("sdvd/server:1.2.3"))
-        self.assertTrue(MATRIX.required_remote_image("ghcr.io/anxiyizhi/example:1.2.3"))
+        self.assertTrue(MATRIX.required_remote_image("ghcr.io/EeiMo/example:1.2.3"))
         self.assertTrue(MATRIX.required_remote_image("crpi-9z3bkb9g7fxeohrg.cn-hangzhou.personal.cr.aliyuncs.com/anxi-panel/example:1.2.3"))
         self.assertFalse(MATRIX.required_remote_image("docker.1ms.run/sdvd/server:1.2.3"))
 

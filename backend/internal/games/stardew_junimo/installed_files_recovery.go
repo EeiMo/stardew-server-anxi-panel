@@ -3,7 +3,7 @@ package stardew_junimo
 import (
 	"context"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 func recoverableInstalledFilesError(instance storage.Instance) bool {

@@ -140,7 +140,7 @@ def required_remote_image(image: str) -> bool:
     repository = image.rsplit(":", 1)[0]
     first_segment = repository.split("/", 1)[0]
     canonical_docker_hub = "." not in first_segment and ":" not in first_segment and first_segment != "localhost"
-    owned_mirror = repository.startswith("ghcr.io/anxiyizhi/") or repository.startswith(
+    owned_mirror = repository.startswith("ghcr.io/EeiMo/") or repository.startswith(
         "crpi-9z3bkb9g7fxeohrg.cn-hangzhou.personal.cr.aliyuncs.com/anxi-panel/"
     )
     return canonical_docker_hub or owned_mirror
@@ -298,7 +298,7 @@ def verify_remote_artifacts(matrix: dict) -> None:
     with tempfile.TemporaryDirectory(prefix="anxi-matrix-trace-") as directory:
         commands = (
             ["git", "init", "--quiet", directory],
-            ["git", "-C", directory, "fetch", "--quiet", "--no-tags", "--depth=500", "https://github.com/AnXiYiZhi/junimo-server-steam-service-cn.git", f"+{matrix['steamAuth']['sourceRevision']}:refs/verify/auth-source"],
+            ["git", "-C", directory, "fetch", "--quiet", "--no-tags", "--depth=500", "https://github.com/EeiMo/junimo-server-steam-service-cn.git", f"+{matrix['steamAuth']['sourceRevision']}:refs/verify/auth-source"],
             ["git", "-C", directory, "fetch", "--quiet", "--no-tags", "--depth=1", "https://github.com/stardew-valley-dedicated-server/server.git", f"+{matrix['steamAuth']['upstreamRef']}:refs/verify/upstream"],
         )
         for command in commands:

@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/auth"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/auth"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 const maxJSONBodyBytes = 1 << 20

@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	sjconfig "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	sjconfig "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 const defaultJobTimeout = 30 * time.Minute

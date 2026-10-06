@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
-	sj "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
-	sjconfig "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
+	sj "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
+	sjconfig "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 type junimoUpdateDryRunDriver interface {

@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	paneldocker "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/docker"
+	paneldocker "github.com/eeimo/stardew-server-anxi-panel/backend/internal/docker"
 )
 
 func TestDockerResourceMetricsConcurrentRequestsShareSample(t *testing.T) {

@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
-	sj "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
+	sj "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 func TestControlCommandHistoryEndpointIncludesLegacyCompatibility(t *testing.T) {

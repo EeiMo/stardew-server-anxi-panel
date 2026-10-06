@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
 )
 
 // Mod installs can be started by independent HTTP/job entry points. Serialize

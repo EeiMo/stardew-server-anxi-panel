@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
-      GHCR_IMAGE: ghcr.io/anxiyizhi/stardew-server-anxi-panel
+      GHCR_IMAGE: ghcr.io/EeiMo/stardew-server-anxi-panel
 
     steps:
       - name: Checkout main

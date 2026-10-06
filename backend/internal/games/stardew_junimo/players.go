@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 // PlayerInfo describes one player from the best available Stardew runtime source.

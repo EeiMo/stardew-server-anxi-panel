@@ -3,7 +3,7 @@
 Anxi Panel 的正式版本号对应 Docker Hub 上发布的镜像 tag。以下是主要版本的用户可见变更摘要。
 
 ::: tip GitHub Release
-每个版本都对应一个 GitHub Release，可以在 [GitHub Releases](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/releases) 查看每版的完整变更说明。
+每个版本都对应一个 GitHub Release，可以在 [GitHub Releases](https://github.com/EeiMo/stardew-server-anxi-panel/releases) 查看每版的完整变更说明。
 :::
 
 ## v0.7.2（最新版本）
@@ -16,7 +16,7 @@ Anxi Panel 的正式版本号对应 Docker Hub 上发布的镜像 tag。以下�
 
 **素材与构建输入减负**：清理失效图片、旧独立安装页和无人调用的代码，前端构建产物约从 28.45 MiB 减至 15.44 MiB；构建按锁文件确定性安装，Docker 上下文排除缓存和生成目录。
 
-本版通过完整代码门禁、全新安装、`v0.7.1 → v0.7.2` 真实 Web 升级、异常目标自动回滚，以及新装/升级后的直连权限、端口刷新和多世界隔离专项。数据库结构、运行栈版本与 Control 0.3.8 保持兼容。三仓 `0.7.2/latest` 和 [GitHub Release v0.7.2](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/releases/tag/v0.7.2) 使用同一不可变镜像。
+本版通过完整代码门禁、全新安装、`v0.7.1 → v0.7.2` 真实 Web 升级、异常目标自动回滚，以及新装/升级后的直连权限、端口刷新和多世界隔离专项。数据库结构、运行栈版本与 Control 0.3.8 保持兼容。三仓 `0.7.2/latest` 和 [GitHub Release v0.7.2](https://github.com/EeiMo/stardew-server-anxi-panel/releases/tag/v0.7.2) 使用同一不可变镜像。
 
 ## v0.7.1
 
@@ -30,7 +30,7 @@ Anxi Panel 的正式版本号对应 Docker Hub 上发布的镜像 tag。以下�
 
 **完善桌面与手机操作**：优化总览、控制、玩家、模组、存档、诊断、任务与设置页面布局，加入手机快捷操作排序、总览待批准玩家入口，统一直连地址和木纹按钮反馈。
 
-本版包含发布前全部已完成的相关代码、测试、素材和文档修改，已通过全量回归、全新安装、`v0.7.0 → v0.7.1` 真实 Web 升级、异常目标自动回滚和升级后专项验收。Docker Hub、阿里云 ACR、GHCR 的 `0.7.1/latest` 与 [GitHub Release v0.7.1](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/releases/tag/v0.7.1) 对应同一不可变镜像。
+本版包含发布前全部已完成的相关代码、测试、素材和文档修改，已通过全量回归、全新安装、`v0.7.0 → v0.7.1` 真实 Web 升级、异常目标自动回滚和升级后专项验收。Docker Hub、阿里云 ACR、GHCR 的 `0.7.1/latest` 与 [GitHub Release v0.7.1](https://github.com/EeiMo/stardew-server-anxi-panel/releases/tag/v0.7.1) 对应同一不可变镜像。
 
 ## v0.7.0
 
@@ -42,7 +42,7 @@ Anxi Panel 的正式版本号对应 Docker Hub 上发布的镜像 tag。以下�
 
 **状态与恢复体验完善**：世界启停采用定向轮询，任务期间保留正确方向和连接地址；游戏文件恢复后可解除对应历史安装错误。登录失效会回到带说明的登录表单，并保留原页面路径。同步完善农场图标、世界卡名称展示，并修复 Windows 首次导入时 journal 并发回读导致的文件替换失败。
 
-本版已完成 `v0.6.1 → v0.7.0` 的真实 Web 升级、异常目标自动回滚、长期数据保持和升级后多世界操作验收。Docker Hub、阿里云 ACR、GHCR 的 `0.7.0/latest` 与 [GitHub Release v0.7.0](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/releases/tag/v0.7.0) 使用同一不可变镜像。
+本版已完成 `v0.6.1 → v0.7.0` 的真实 Web 升级、异常目标自动回滚、长期数据保持和升级后多世界操作验收。Docker Hub、阿里云 ACR、GHCR 的 `0.7.0/latest` 与 [GitHub Release v0.7.0](https://github.com/EeiMo/stardew-server-anxi-panel/releases/tag/v0.7.0) 使用同一不可变镜像。
 
 ## v0.6.1
 
@@ -50,7 +50,7 @@ Anxi Panel 的正式版本号对应 Docker Hub 上发布的镜像 tag。以下�
 
 **保护状态会主动自检**：Control 升级到 `0.3.8`，启动时检查补丁目标和安装状态。旧 Control、字段缺失或补丁加载失败时，Panel 会停止服务器并提示运行组件保护不可用，不会在未知状态下继续开放联机。发送者自己的原版客户端仍可能在本地聊天框显示刚输入的内容，因此本功能解决的是“服务端不再向其他玩家广播”，并不等同于密码输入框遮罩或端到端加密。
 
-本版候选完成全新 Panel 安装、Panel 重启、`v0.6.0 → v0.6.1` 异常目标自动回滚与健康 Web 升级，并执行 `v0.3.2 → v0.6.1` 最老受影响边界直升；真实 `!login` 不广播由未安装客户端 Mod 的实际联机验证确认。Docker Hub、阿里云 ACR、GHCR 的 `0.6.1/latest`、正式健康/版本冒烟与 [GitHub Release v0.6.1](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/releases/tag/v0.6.1) 均绑定同一不可变镜像。
+本版候选完成全新 Panel 安装、Panel 重启、`v0.6.0 → v0.6.1` 异常目标自动回滚与健康 Web 升级，并执行 `v0.3.2 → v0.6.1` 最老受影响边界直升；真实 `!login` 不广播由未安装客户端 Mod 的实际联机验证确认。Docker Hub、阿里云 ACR、GHCR 的 `0.6.1/latest`、正式健康/版本冒烟与 [GitHub Release v0.6.1](https://github.com/EeiMo/stardew-server-anxi-panel/releases/tag/v0.6.1) 均绑定同一不可变镜像。
 
 ## v0.6.0
 

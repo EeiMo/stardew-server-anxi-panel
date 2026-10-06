@@ -1580,7 +1580,7 @@
 
 # 2026-07-07 已完成：文档门户网站骨架上线（VitePress + GitHub Pages）
 
-- `DOCS-PORTAL-1` completed：`website/` 下手动搭建 VitePress 骨架（`npm create vitepress@latest` 实测解析到无关第三方包 `create-vitepress@0.0.6`，改用 `npm init` + `npm install -D vitepress` 手动创建），新增 `.github/workflows/docs.yml`（push `website/**` 到 `main` 时自动 `docs:build` 并部署到 GitHub Pages），用 `gh api repos/.../pages -f build_type=workflow` 开通 Pages（Source: GitHub Actions）。已推送并验证线上首页 `https://anxiyizhi.github.io/stardew-server-anxi-panel/` 返回 200。
+- `DOCS-PORTAL-1` completed：`website/` 下手动搭建 VitePress 骨架（`npm create vitepress@latest` 实测解析到无关第三方包 `create-vitepress@0.0.6`，改用 `npm init` + `npm install -D vitepress` 手动创建），新增 `.github/workflows/docs.yml`（push `website/**` 到 `main` 时自动 `docs:build` 并部署到 GitHub Pages），用 `gh api repos/.../pages -f build_type=workflow` 开通 Pages（Source: GitHub Actions）。已推送并验证线上首页 `https://eeimo.github.io/stardew-server-anxi-panel/` 返回 200。
 - `DOCS-PORTAL-2` completed：内容迁移（方案第三节映射表）已完成，`guide/`（2 页）、`deploy/`（4 页）、`maintain/`（4 页，比原方案多一页 `admin.md`）、`faq/`（1 页）共 11 个内容页从 `README.md` / `docs/user-guide/` 搬运改写完毕，`npm run docs:build` 验证无死链。待办：推送到 `main` 触发线上部署（当前线上仍是占位首页）。详见 `docs/11-docs-portal.md`。
 
 # 2026-07-07 已完成：Nexus ZIP 下载断点续传与卡死检测
@@ -2380,7 +2380,7 @@ Multi Game Mode later
 - `RUN-SH-QUICK-MODE-1` docs follow-up：README 与镜像构建文档已补充“一键启动脚本”的国内加速安装入口，推荐国内用户通过自有轻量服务器静态分发 `run.sh`，GitHub Release 地址作为备用；Docker 镜像仍由脚本内候选源拉取，不通过该轻量服务器中转。
 - `RELEASE-TAG-CI-1` follow-up：面板仓库 ACR 发布地址已切换到阿里云新版个人版实例域名 `crpi-9z3bkb9g7fxeohrg.cn-hangzhou.personal.cr.aliyuncs.com`；GitHub Actions 和 `deploy/run.sh` 默认国内镜像源同步更新。`ALIYUN_REGISTRY_USERNAME` 使用 ACR 访问凭证登录命令中的 `--username` 值。
 - `RELEASE-TAG-CI-1` follow-up：配套 `junimo-steam-service-cn` tag 发布 workflow 已切换到同一 ACR 新版个人版域名；面板内 `STEAM_SERVICE_IMAGE_CANDIDATES` 默认把该 ACR 镜像放在第二候选，顺序为 1ms、ACR、DaoCloud、GHCR、Docker Hub。
-- `RELEASE-TAG-CI-1` follow-up：面板仓库 tag 发版 workflow 已增加 GHCR 发布目标 `ghcr.io/anxiyizhi/stardew-server-anxi-panel`，并给 `deploy/run.sh` 增加 GHCR 镜像源选项；配套 steam-service-cn workflow 保持发布 `ghcr.io/<owner>/junimo-steam-service-cn`。
+- `RELEASE-TAG-CI-1` follow-up：面板仓库 tag 发版 workflow 已增加 GHCR 发布目标 `ghcr.io/EeiMo/stardew-server-anxi-panel`，并给 `deploy/run.sh` 增加 GHCR 镜像源选项；配套 steam-service-cn workflow 保持发布 `ghcr.io/<owner>/junimo-steam-service-cn`。
 
 # SAVE-POINTER-SUFFIX-HEAL-1 状态
 - `SAVE-POINTER-SUFFIX-HEAL-1` completed（代码已修复+测试通过，尚未部署）：修复 JunimoServer 新建存档时把 `gameloader.json` 存档名前缀写错导致"当前激活存档"永久显示"未知"、新建存档轮询误报超时的问题，面板现在能按数字后缀自动识别并修正真实存档目录。详见 `docs/backend-handoff/backend-handoff-2026-07-07.md`。

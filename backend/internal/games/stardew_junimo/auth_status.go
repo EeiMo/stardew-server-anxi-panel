@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 const authStatusRequestTimeout = 10 * time.Second

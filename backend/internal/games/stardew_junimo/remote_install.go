@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
 )
 
 var ErrInvalidRemoteModURL = errors.New("远程 Mod 下载链接无效")

@@ -3,7 +3,7 @@ package web
 import (
 	"net/http"
 
-	sj "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
+	sj "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
 )
 
 func (s *server) handleInstanceGameLanguage(w http.ResponseWriter, r *http.Request, instanceID string) {

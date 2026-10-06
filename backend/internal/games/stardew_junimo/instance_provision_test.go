@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
-	sjconfig "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
+	sjconfig "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
 )
 
 func TestAllocateProvisionPortsSkipsExistingInstanceBindings(t *testing.T) {

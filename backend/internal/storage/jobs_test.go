@@ -8,7 +8,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/config"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/config"
 )
 
 func TestJobsStorageLifecycle(t *testing.T) {

@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/config"
-	sjconfig "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/config"
+	sjconfig "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 func TestManagerMarksSuccessfulAndFailedJobs(t *testing.T) {

@@ -15,7 +15,7 @@ func TestResolveComposeDeploymentValidatesPersistentPanelImageContract(t *testin
 	composeFile := filepath.Join(installDir, "docker-compose.yml")
 	dataSource := filepath.Join(installDir, "data")
 	container := ContainerInfo{
-		ID: "1234567890abcdef", Image: "ghcr.io/anxiyizhi/stardew-server-anxi-panel:0.4.11", ImageID: "sha256:current",
+		ID: "1234567890abcdef", Image: "ghcr.io/EeiMo/stardew-server-anxi-panel:0.4.11", ImageID: "sha256:current",
 	}
 	configJSON, err := json.Marshal(map[string]any{
 		"services": map[string]any{

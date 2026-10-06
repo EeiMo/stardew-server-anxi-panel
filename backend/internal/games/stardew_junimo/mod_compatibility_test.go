@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
 )
 
 func TestDetectModCompatibilityWarningsFlagsPreSVEIntroductions(t *testing.T) {

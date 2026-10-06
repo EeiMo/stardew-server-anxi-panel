@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/auth"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/auth"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 var usernamePattern = regexp.MustCompile(`^[A-Za-z0-9_.-]{3,32}$`)

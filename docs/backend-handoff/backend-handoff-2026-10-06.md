@@ -138,7 +138,7 @@ ComposeDown、失败阶段被改写成 `new_game_isolation_stop_failed`），已
 ### 4. 面板自身更新检查来源可配置（`config.go`、`cmd/panel/main.go`、`web/handler.go`、`deploy/`）
 
 **问题**：`updatecheck.defaultLatestReleaseURL` 硬编码为上游仓库
-`api.github.com/repos/anxiyizhi/stardew-server-anxi-panel/releases/latest`，
+`api.github.com/repos/EeiMo/stardew-server-anxi-panel/releases/latest`，
 `internal/config` 没有对应字段，`cmd/panel/main.go` 与 `internal/web/handler.go`
 两个 `updatecheck.New` 调用点也都没有传 `LatestReleaseURL`。于是 fork 构建的面板仍然
 把**上游**版本当成可用更新："版本详情 / 查看更新页"指向原作者的 Release；而
@@ -159,7 +159,7 @@ ComposeDown、失败阶段被改写成 `new_game_isolation_stop_failed`），已
 `internal/config` 与 `internal/updatecheck` 全量用例通过。
 
 **尚未处理（重要）**：`internal/updater/images.go` 的受信镜像前缀仍是上游命名空间
-（`ghcr.io/anxiyizhi/...` 等）。只改 release 来源时，若 fork 未发布 GitHub Release，
+（`ghcr.io/EeiMo/...` 等）。只改 release 来源时，若 fork 未发布 GitHub Release，
 更新检查会 404 并显示检查失败——这比"提示可升级到上游"更安全。但在把镜像发布到
 fork 自己的仓库或让受信前缀可配置之前，**不要对 fork 构建使用面板内的一键升级**。
 

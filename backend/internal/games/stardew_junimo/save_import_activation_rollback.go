@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/jobs"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/jobs"
 )
 
 const (

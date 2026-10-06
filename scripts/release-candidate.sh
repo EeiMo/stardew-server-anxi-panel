@@ -106,7 +106,7 @@ dind_container="$owner-dind"
 temp_root="$(mktemp -d -t "$owner-XXXXXX")"
 candidate_tar="$temp_root/candidate.tar"
 fixtures_tar="$temp_root/fixtures.tar"
-previous_ref="ghcr.io/anxiyizhi/stardew-server-anxi-panel:$previous_version"
+previous_ref="ghcr.io/EeiMo/stardew-server-anxi-panel:$previous_version"
 
 cleanup() {
   local cleanup_status=$?

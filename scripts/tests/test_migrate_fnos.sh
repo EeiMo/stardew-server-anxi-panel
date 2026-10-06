@@ -22,7 +22,7 @@ if managed_project_name '...' >/dev/null 2>&1; then exit 1; fi
 [[ "$(collision_safe_project_name anxi-panel-panel ABCDEF1234567890 old-project true)" == 'anxi-panel-migrated-abcdef123456' ]]
 if collision_safe_project_name anxi-panel-panel invalid old-project false >/dev/null 2>&1; then exit 1; fi
 
-trusted_panel_image anxiyizhi/stardew-server-anxi-panel:0.3.13
+trusted_panel_image EeiMo/stardew-server-anxi-panel:0.3.13
 trusted_panel_image crpi-9z3bkb9g7fxeohrg.cn-hangzhou.personal.cr.aliyuncs.com/anxi-panel/stardew-server-anxi-panel:0.3.13
 if trusted_panel_image example.invalid/anxi-panel:0.3.13; then exit 1; fi
 

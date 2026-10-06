@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	paneldocker "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/docker"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	paneldocker "github.com/eeimo/stardew-server-anxi-panel/backend/internal/docker"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 func prepareInstallationDiagnosticFixture(t *testing.T) string {

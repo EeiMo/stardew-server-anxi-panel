@@ -5,11 +5,11 @@
   <p>面向中文用户的 Stardew Valley 专用服务器 Web 管理面板。<br>安装、Steam 认证、启停、存档、Mod、玩家与日常维护，一处完成。</p>
   <p>
     <a href="https://github.com/EeiMo/stardew-server-anxi-panel/releases/latest"><img src="https://img.shields.io/github/v/release/EeiMo/stardew-server-anxi-panel?display_name=tag&amp;style=flat-square&amp;color=5b8c3a" alt="Latest Release"></a>
-    <a href="LICENSE"><img src="https://img.shields.io/github/license/AnXiYiZhi/stardew-server-anxi-panel?style=flat-square&amp;color=c87935" alt="License"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/github/license/EeiMo/stardew-server-anxi-panel?style=flat-square&amp;color=c87935" alt="License"></a>
     <a href="#-快速开始"><img src="https://img.shields.io/badge/运行方式-Docker-2496ED?style=flat-square&amp;logo=docker&amp;logoColor=white" alt="Docker"></a>
     <a href="https://qun.qq.com/universal-share/share?ac=1&amp;authKey=HeQFNP4CqureCKUYia53Hbp8v5O0%2BH5aUPVGyQLofjldXToeO2TSB4JbbYAaWFWW&amp;busi_data=eyJncm91cENvZGUiOiIxMTAzNzk4NDAzIiwidG9rZW4iOiJ2TWhzcWYxNlk4MTlwekdBY1luZWwrY21acTc2SWFkd2wxM25hNUpOOE8rV3RzMThWQWluYUk4Y2F0ZTVIb0poIiwidWluIjoiMTUxNzQ2ODI1MiJ9&amp;data=niTIkqFahNDXKg0NtZOyTcnMsfMI84tU6hUxtn9VnEMYrFTPD7i_dqcj9okLyMQ0sfgLM1m7njUOFxmQqvu64Q&amp;svctype=4&amp;tempid=h5_group_info"><img src="https://img.shields.io/badge/官方QQ群-1103798403-12B7F5?style=flat-square&amp;logo=qq&amp;logoColor=white" alt="官方 QQ 交流群 1103798403"></a>
   </p>
-  <p><a href="#-快速开始">快速开始</a> · <a href="https://anxiyizhi.github.io/stardew-server-anxi-panel/">完整文档</a> · <a href="https://anxiyizhi.github.io/stardew-server-anxi-panel/changelog">更新日志</a> · <a href="README.en.md">English</a></p>
+  <p><a href="#-快速开始">快速开始</a> · <a href="https://eeimo.github.io/stardew-server-anxi-panel/">完整文档</a> · <a href="https://eeimo.github.io/stardew-server-anxi-panel/changelog">更新日志</a> · <a href="README.en.md">English</a></p>
 </div>
 
 ![Docker Desktop 中运行的 Stardew Anxi Panel v0.4.3 真实总览界面](docs/screenshots/anxi-panel-overview-v0.4.3.png)
@@ -53,7 +53,7 @@ Anxi Panel 是围绕 [JunimoServer](https://stardew-valley-dedicated-server.gith
 - 最低 2 核 CPU、2 GB 内存、20 GB 可用空间；推荐 2 核 4 GB、40 GB SSD
 - 一个已经购买《星露谷物语》的 Steam 账号
 
-> Windows 目前不提供原生 `.exe` 或 Windows Service；支持方式是在 WSL2 + Docker Desktop 中运行 Linux 容器。ARM 设备暂不支持。长期 24 小时运行仍优先推荐 Linux 服务器或 NAS。更完整的配置建议请看[系统要求](https://anxiyizhi.github.io/stardew-server-anxi-panel/deploy/requirements)。
+> Windows 目前不提供原生 `.exe` 或 Windows Service；支持方式是在 WSL2 + Docker Desktop 中运行 Linux 容器。ARM 设备暂不支持。长期 24 小时运行仍优先推荐 Linux 服务器或 NAS。更完整的配置建议请看[系统要求](https://eeimo.github.io/stardew-server-anxi-panel/deploy/requirements)。
 
 ### 一键部署（推荐）
 
@@ -89,7 +89,7 @@ http://你的服务器IP:8090
 
 ### Windows + Docker Desktop
 
-Windows 不是原生部署环境，需要通过 WSL2 运行 Docker Desktop 的 Linux containers。第一次设置请先看完整的 [Windows + Docker Desktop 部署说明](https://anxiyizhi.github.io/stardew-server-anxi-panel/deploy/windows)。
+Windows 不是原生部署环境，需要通过 WSL2 运行 Docker Desktop 的 Linux containers。第一次设置请先看完整的 [Windows + Docker Desktop 部署说明](https://eeimo.github.io/stardew-server-anxi-panel/deploy/windows)。
 
 1. 在 Windows 10/11 安装并更新 WSL2 与 Docker Desktop。
 2. 在 Docker Desktop 中启用 **Use WSL 2 based engine**、切换到 **Linux containers**，并为使用的 WSL2 发行版开启 **WSL Integration**。
@@ -98,7 +98,7 @@ Windows 不是原生部署环境，需要通过 WSL2 运行 Docker Desktop 的 L
 
 建议把面板数据保存在 WSL2 的 Linux 文件系统中，并保持 Docker Desktop 运行。Windows 防火墙仍需按联机场景允许面板和游戏端口；系统重启或 Docker Desktop 退出期间，服务器也会停止。
 
-NAS 用户也优先使用 SSH 一键部署；只有非常熟悉 Docker 图形界面时，才建议使用图形化 Compose。Windows、NAS、飞牛 OS 和手动 Compose 的完整说明请查看[部署指南](https://anxiyizhi.github.io/stardew-server-anxi-panel/deploy/requirements)。
+NAS 用户也优先使用 SSH 一键部署；只有非常熟悉 Docker 图形界面时，才建议使用图形化 Compose。Windows、NAS、飞牛 OS 和手动 Compose 的完整说明请查看[部署指南](https://eeimo.github.io/stardew-server-anxi-panel/deploy/requirements)。
 
 ## 🧭 日常管理
 
@@ -111,13 +111,13 @@ NAS 用户也优先使用 SSH 一键部署；只有非常熟悉 Docker 图形界
 - 在「模组」维护 SMAPI Mod，并处理更新或重启提示。
 - 在「诊断」检查环境、导出脱敏支持包或升级 Panel 与运行组件。
 
-第一次使用建议从[快速上手](https://anxiyizhi.github.io/stardew-server-anxi-panel/guide/getting-started)开始；遇到安装失败、连不上、邀请码不显示等问题，可按现象查看[常见问题](https://anxiyizhi.github.io/stardew-server-anxi-panel/faq/)。
+第一次使用建议从[快速上手](https://eeimo.github.io/stardew-server-anxi-panel/guide/getting-started)开始；遇到安装失败、连不上、邀请码不显示等问题，可按现象查看[常见问题](https://eeimo.github.io/stardew-server-anxi-panel/faq/)。
 
 ## ⚠️ 使用前请了解
 
 星露谷物语本身没有传统意义上的原生专用服务器。JunimoServer 会运行一个真实的游戏客户端作为虚拟房主，因此节日、剧情、跨日流程以及部分第三方 Mod 仍可能需要人工介入，也无法保证在所有游戏版本与 Mod 组合下完全无人值守。
 
-为了保护农场数据，建议开启定期备份，并在更新游戏、SMAPI、JunimoServer 或大型 Mod 前额外创建一次完整备份。已确认的上游风险与应对方式会持续记录在[已知问题](https://anxiyizhi.github.io/stardew-server-anxi-panel/faq/known-issues)中。
+为了保护农场数据，建议开启定期备份，并在更新游戏、SMAPI、JunimoServer 或大型 Mod 前额外创建一次完整备份。已确认的上游风险与应对方式会持续记录在[已知问题](https://eeimo.github.io/stardew-server-anxi-panel/faq/known-issues)中。
 
 安全方面请注意：
 
@@ -130,12 +130,12 @@ NAS 用户也优先使用 SSH 一键部署；只有非常熟悉 Docker 图形界
 
 | 文档 | 适合谁 |
 | --- | --- |
-| [快速上手](https://anxiyizhi.github.io/stardew-server-anxi-panel/guide/getting-started) | 第一次部署的新服主 |
-| [部署指南](https://anxiyizhi.github.io/stardew-server-anxi-panel/deploy/requirements) | 云服务器、NAS 与飞牛 OS 用户 |
-| [功能手册](https://anxiyizhi.github.io/stardew-server-anxi-panel/handbook/) | 需要了解每个面板页面的用户 |
-| [日常维护](https://anxiyizhi.github.io/stardew-server-anxi-panel/maintain/update) | 更新、备份和 Mod 管理 |
-| [常见问题](https://anxiyizhi.github.io/stardew-server-anxi-panel/faq/) | 正在排查安装或联机问题的用户 |
-| [版本更新](https://anxiyizhi.github.io/stardew-server-anxi-panel/changelog) | 查看最新功能与修复 |
+| [快速上手](https://eeimo.github.io/stardew-server-anxi-panel/guide/getting-started) | 第一次部署的新服主 |
+| [部署指南](https://eeimo.github.io/stardew-server-anxi-panel/deploy/requirements) | 云服务器、NAS 与飞牛 OS 用户 |
+| [功能手册](https://eeimo.github.io/stardew-server-anxi-panel/handbook/) | 需要了解每个面板页面的用户 |
+| [日常维护](https://eeimo.github.io/stardew-server-anxi-panel/maintain/update) | 更新、备份和 Mod 管理 |
+| [常见问题](https://eeimo.github.io/stardew-server-anxi-panel/faq/) | 正在排查安装或联机问题的用户 |
+| [版本更新](https://eeimo.github.io/stardew-server-anxi-panel/changelog) | 查看最新功能与修复 |
 
 ## 🛠️ 参与开发
 

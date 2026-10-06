@@ -9,7 +9,7 @@ import (
 	"sync"
 	"testing"
 
-	sjconfig "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
+	sjconfig "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
 )
 
 func TestRoleCredentialStoreSerializesConcurrentMutationsAndSeparatesSaves(t *testing.T) {

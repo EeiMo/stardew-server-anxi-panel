@@ -71,7 +71,7 @@ jobs:
           workflow_run_id="$(jq -r '.workflowRunId // empty' "$proof")"
           candidate_ref="$(jq -r '.candidateRef // empty' "$proof")"
           digest="$(jq -r '.digest // empty' "$proof")"
-          expected_ref="ghcr.io/anxiyizhi/stardew-server-anxi-panel:candidate-$version-${commit:0:12}"
+          expected_ref="ghcr.io/EeiMo/stardew-server-anxi-panel:candidate-$version-${commit:0:12}"
           if [[ "$schema" != 1 || ! "$version" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ || "$commit" != "$CANDIDATE_COMMIT" || "$workflow_run_id" != "$CANDIDATE_RUN_ID" || "$candidate_ref" != "$expected_ref" || ! "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]; then
             echo "candidate proof does not match the completed workflow run" >&2
             exit 1

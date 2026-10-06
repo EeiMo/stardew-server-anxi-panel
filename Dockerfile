@@ -68,9 +68,9 @@ COPY --from=frontend-builder /app/frontend/dist/ internal/static/frontend_dist/
 COPY backend/ ./
 RUN CGO_ENABLED=0 GOOS=linux go build \
     -ldflags="-s -w \
-    -X 'github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/config.buildVersion=${VERSION}' \
-    -X 'github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/config.buildCommit=${COMMIT}' \
-    -X 'github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/config.buildDate=${BUILD_DATE}'" \
+    -X 'github.com/eeimo/stardew-server-anxi-panel/backend/internal/config.buildVersion=${VERSION}' \
+    -X 'github.com/eeimo/stardew-server-anxi-panel/backend/internal/config.buildCommit=${COMMIT}' \
+    -X 'github.com/eeimo/stardew-server-anxi-panel/backend/internal/config.buildDate=${BUILD_DATE}'" \
     -o /app/panel ./cmd/panel
 RUN CGO_ENABLED=0 GOOS=linux go build \
     -ldflags="-s -w" \

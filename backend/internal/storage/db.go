@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/config"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/config"
 )
 
 // Store wraps the panel SQLite database.

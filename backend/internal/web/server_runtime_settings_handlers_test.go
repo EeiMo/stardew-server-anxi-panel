@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	sj "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	sj "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 func TestServerRuntimeSettingsAPIPlayerLimitLifecycleAndAudit(t *testing.T) {

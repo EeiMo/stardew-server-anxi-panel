@@ -11,16 +11,16 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/config"
-	paneldocker "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/docker"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
-	sharedsteamcmd "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/steamcmd"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/jobs"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/updatecheck"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/updater"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/web"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/config"
+	paneldocker "github.com/eeimo/stardew-server-anxi-panel/backend/internal/docker"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
+	sharedsteamcmd "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/steamcmd"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/jobs"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/updatecheck"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/updater"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/web"
 )
 
 func main() {

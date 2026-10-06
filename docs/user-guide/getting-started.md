@@ -36,7 +36,7 @@ http://服务器公网IP:8090
 
 ### Windows + Docker Desktop
 
-Windows 用户先按[官网的 Windows + Docker Desktop 独立部署说明](https://anxiyizhi.github.io/stardew-server-anxi-panel/deploy/windows)完成 WSL2、Linux containers、WSL Integration、安装目录和防火墙设置。确认 `docker version`、`docker compose version` 可用后，在 WSL2 Linux 终端运行上面同一条部署命令，完成后访问 `http://localhost:8090`。
+Windows 用户先按[官网的 Windows + Docker Desktop 独立部署说明](https://eeimo.github.io/stardew-server-anxi-panel/deploy/windows)完成 WSL2、Linux containers、WSL Integration、安装目录和防火墙设置。确认 `docker version`、`docker compose version` 可用后，在 WSL2 Linux 终端运行上面同一条部署命令，完成后访问 `http://localhost:8090`。
 
 Windows 支持的是 WSL2 + Docker Desktop 中的 Linux 容器，不是原生 `.exe` 或 Windows Service。建议把 `~/.anxi-panel` 留在 WSL2 Linux 文件系统中并保持 Docker Desktop 运行；长期 24 小时服务仍优先推荐 Linux/NAS。
 
@@ -44,7 +44,7 @@ Windows 支持的是 WSL2 + Docker Desktop 中的 Linux 容器，不是原生 `.
 
 NAS 用户也优先推荐在系统设置中开启 SSH，并运行上面同一条一键部署命令。脚本会自动生成和检查配置，后续更新与维护也更省心。
 
-只有已经非常熟悉 NAS 的 Docker / Container Manager / 项目 / 应用栈界面，能够自行正确处理宿主机路径、Docker Socket、端口、挂载和环境变量时，才建议使用[官网的 NAS 图形化部署（进阶）](https://anxiyizhi.github.io/stardew-server-anxi-panel/deploy/nas)。
+只有已经非常熟悉 NAS 的 Docker / Container Manager / 项目 / 应用栈界面，能够自行正确处理宿主机路径、Docker Socket、端口、挂载和环境变量时，才建议使用[官网的 NAS 图形化部署（进阶）](https://eeimo.github.io/stardew-server-anxi-panel/deploy/nas)。
 
 ## 四、首次进入面板
 

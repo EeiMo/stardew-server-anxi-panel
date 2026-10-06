@@ -12,10 +12,10 @@ import (
 	"testing"
 	"time"
 
-	paneldocker "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/docker"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
-	sjconfig "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	paneldocker "github.com/eeimo/stardew-server-anxi-panel/backend/internal/docker"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
+	sjconfig "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 func TestRuntimeUpdateRollbackMaterializesMissingJunimoFromOriginalImageID(t *testing.T) {

@@ -106,7 +106,7 @@ export default defineConfig({
       }
     },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/AnXiYiZhi/stardew-server-anxi-panel' }
+      { icon: 'github', link: 'https://github.com/EeiMo/stardew-server-anxi-panel' }
     ],
     outline: { label: '本页目录' },
     docFooter: { prev: '上一页', next: '下一页' },

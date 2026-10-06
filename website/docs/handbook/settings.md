@@ -50,5 +50,5 @@
 
 ## 下一步
 
-- 完整安全上下文（Docker Socket 权限模型、内部原则）：看 [项目总纲](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/blob/main/docs/01-project-overview.md)。
+- 完整安全上下文（Docker Socket 权限模型、内部原则）：看 [项目总纲](https://github.com/EeiMo/stardew-server-anxi-panel/blob/main/docs/01-project-overview.md)。
 - 具体报错排查：看 [常见问题](/faq/)。

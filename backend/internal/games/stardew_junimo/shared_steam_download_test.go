@@ -6,10 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
-	sjconfig "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
-	sharedsteamcmd "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/steamcmd"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
+	sjconfig "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
+	sharedsteamcmd "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/steamcmd"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 func TestSharedSteamDownloadMigratesLegacyCredentialsAndUsesPanelVolumes(t *testing.T) {

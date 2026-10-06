@@ -186,7 +186,7 @@ func TestUpdateEnvImageAppendsMissingPanelImage(t *testing.T) {
 	if err := os.WriteFile(envFile, []byte("PANEL_SECRET=preserved\n"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	image := "ghcr.io/anxiyizhi/stardew-server-anxi-panel:0.4.12"
+	image := "ghcr.io/EeiMo/stardew-server-anxi-panel:0.4.12"
 	if err := updateEnvImage(envFile, image); err != nil {
 		t.Fatal(err)
 	}

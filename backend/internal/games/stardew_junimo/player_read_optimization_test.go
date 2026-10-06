@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/config"
-	paneldocker "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/docker"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/config"
+	paneldocker "github.com/eeimo/stardew-server-anxi-panel/backend/internal/docker"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 func TestPlayerReadAcceptsConcurrentControlRefresh(t *testing.T) {

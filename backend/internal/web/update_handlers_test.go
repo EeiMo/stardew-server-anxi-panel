@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/config"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/updatecheck"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/config"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/updatecheck"
 )
 
 type fakeUpdateChecker struct {

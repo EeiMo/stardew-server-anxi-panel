@@ -573,7 +573,7 @@
 ## 如何验证、下一步注意事项
 
 - 不可变候选 `33073661356` 成功，包含前端 19 项状态/响应式回归与 production build；同一不可变镜像完成 fresh/restart、`v0.5.13 → v0.6.0` 和 `v0.3.2 → v0.6.0` Web 升级，升级夹具验证权威 DTO/迁移状态。发布前本机 Browser 桌面/移动渲染只作为补充，不冒充候选 proof。
-- 自动 annotated tag workflow `33075599631`、正式提升 `33075622114` 均成功；三仓 `0.6.0/latest` 唯一 digest=`sha256:e9c1613a7ffbd13d92d5a197d751cb5de6b08b65f74351e39a4ad0f9b4598d16`。[GitHub Release v0.6.0](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/releases/tag/v0.6.0)
+- 自动 annotated tag workflow `33075599631`、正式提升 `33075622114` 均成功；三仓 `0.6.0/latest` 唯一 digest=`sha256:e9c1613a7ffbd13d92d5a197d751cb5de6b08b65f74351e39a4ad0f9b4598d16`。[GitHub Release v0.6.0](https://github.com/EeiMo/stardew-server-anxi-panel/releases/tag/v0.6.0)
 - 后续维护不得移动 `v0.6.0` tag，也不得把发布前本机热预览镜像或截图当作正式候选证明；正式身份只认上述 commit、workflow 与 digest。
 
 # FE-V060-INVITE-COLD-START-WAIT-1 前端接手记录（2026-08-27，released in v0.6.0）

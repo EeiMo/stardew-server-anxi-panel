@@ -195,8 +195,8 @@
 - 嵌入身份已同步为 stack `junimo-1.5.0-preview.125_auth-1.5.0-anxi.2_game-16826371_sdk-20939719_smapi-4.5.2_control-0.3.8`，两份 Control manifest 均为 `0.3.8`，嵌入 DLL SHA-256=`dda16954bf3188222b4c8cdbf8d95f75dd2550748a40ec227a33706cf274d3cf`。主要文件为 `LoginChatPrivacyPatch.cs`、`LoginChatPrivacyPolicy.cs`、`ModEntry.cs`、`ControlContract.cs`、Control contract tests、`control_runtime_gate*.go`、运行栈清单和升级脚本夹具；SQLite、Compose、存档与角色 verifier 格式不变。
 - 本地验证已通过 C# 纯契约测试、精确本机游戏程序集 Control build（0 errors），以及固定 .NET SDK 6.0.428、真实只读 Stardew build `16826371` 的标准 Linux `/game` build（0 errors）；fresh Linux 产物只证明源码可编译，不跨路径强等于或覆盖 embedded DLL。Linux `go test ./internal/games/stardew_junimo/...`（核心包 `220.255s`）、`go vet ./...`、`go build ./...`、manifest/DLL hash 契约、生命周期停服回归和升级脚本 `bash -n`/ShellCheck 也均通过。用户已于 2026-08-28 明确确认未安装客户端 Mod 的实际联机测试通过并授权恢复远端镜像构建。首次 push-origin 候选 `33168728635` 在镜像构建/推送前因等待该人工确认而主动取消，未创建正式制品。
 - 人工确认后的候选 `33171764289` 通过代码门禁并完成镜像构建，但在 candidate push/proof 前被旧升级夹具安全拦截：previous=`v0.6.0` 已按设计移除 legacy Auth dependency，夹具却仍按 pre-`v0.6.0` 断言。修复现把 unknown same-volume holder 放到 previous 启动前，并按 `<0.6.0`/`>=0.6.0` 分流精确 Compose 预期；`v0.6.1` 发布矩阵同时固定为 previous=`v0.6.0`、oldest=`v0.3.2`，缺项或错版直接拒绝，须从包含修复的新 commit 重跑完整候选。
-- 最终 `v0.6.1@5c0135e6bdb5b8353d049030da3c3c06a6e243a0` 已正式发布。不可变候选 [`33177568325`](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/actions/runs/33177568325) 完成 full code gates、Panel fresh/restart、`v0.6.0 → v0.6.1` unhealthy 回滚与 healthy Web apply、immutable Control DLL/manifest/hash 和 required gate 契约复验，以及 `v0.3.2 → v0.6.1` 最老受影响边界直升；真实 `!login` fan-out 行为仍只归因于用户实机证据，不把 fixture 手写 options 冒充真实聊天。proof artifact=`release-candidate-0.6.1-5c0135e6bdb5`（ID `9689244375`），OCI build date=`2026-08-28T13:54:58Z`。
-- 自动 annotated tag workflow [`33179940424`](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/actions/runs/33179940424) 与正式提升 [`33179959858`](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/actions/runs/33179959858) 成功；tag object=`96f8fa28f1c454133bd7cb2b887e1e879485bdff`，三仓 `0.6.1/latest` 六引用统一 digest=`sha256:9b7746caeb9c3c9091e7e6c07b1cc3cdf18dce82ebcfb5a70bc4c5a5835961bd`，promotion 未 rebuild。[GitHub Release v0.6.1](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/releases/tag/v0.6.1)
+- 最终 `v0.6.1@5c0135e6bdb5b8353d049030da3c3c06a6e243a0` 已正式发布。不可变候选 [`33177568325`](https://github.com/EeiMo/stardew-server-anxi-panel/actions/runs/33177568325) 完成 full code gates、Panel fresh/restart、`v0.6.0 → v0.6.1` unhealthy 回滚与 healthy Web apply、immutable Control DLL/manifest/hash 和 required gate 契约复验，以及 `v0.3.2 → v0.6.1` 最老受影响边界直升；真实 `!login` fan-out 行为仍只归因于用户实机证据，不把 fixture 手写 options 冒充真实聊天。proof artifact=`release-candidate-0.6.1-5c0135e6bdb5`（ID `9689244375`），OCI build date=`2026-08-28T13:54:58Z`。
+- 自动 annotated tag workflow [`33179940424`](https://github.com/EeiMo/stardew-server-anxi-panel/actions/runs/33179940424) 与正式提升 [`33179959858`](https://github.com/EeiMo/stardew-server-anxi-panel/actions/runs/33179959858) 成功；tag object=`96f8fa28f1c454133bd7cb2b887e1e879485bdff`，三仓 `0.6.1/latest` 六引用统一 digest=`sha256:9b7746caeb9c3c9091e7e6c07b1cc3cdf18dce82ebcfb5a70bc4c5a5835961bd`，promotion 未 rebuild。[GitHub Release v0.6.1](https://github.com/EeiMo/stardew-server-anxi-panel/releases/tag/v0.6.1)
 
 # v0.6.0 后端正式发布证据（2026-08-27，released）
 
@@ -335,7 +335,7 @@
 
 # PANEL-UPDATE-LATEST-RELEASE-API-1：面板更新检查改用 GitHub latest（2026-08-18，未发布）
 
-- Panel 更新检查不再请求 `/releases?per_page=20` 并假定列表首个稳定条目就是最新版本；默认源改为 GitHub 官方 `GET /repos/anxiyizhi/stardew-server-anxi-panel/releases/latest`，按单个 Release 对象解析。
+- Panel 更新检查不再请求 `/releases?per_page=20` 并假定列表首个稳定条目就是最新版本；默认源改为 GitHub 官方 `GET /repos/EeiMo/stardew-server-anxi-panel/releases/latest`，按单个 Release 对象解析。
 - 返回对象仍须满足 `draft=false`、`prerelease=false` 且 tag 为有效 SemVer，否则进入现有 `checkStatus=error`，保留上次成功结果，不生成任意升级目标。请求超时、响应上限、NetDNS fallback、管理员手动刷新和 6 小时自动检查契约不变。
 - `internal/updatecheck/service_test.go` 锁定精确 latest URL、单对象响应、draft/prerelease 拒绝和网络失败缓存；2026-08-18 只读核对官方 latest 与列表接口当前均为 `v0.5.4`，本修复纠正的是权威接口契约而非伪造版本差异。updatecheck/Web 专项、`go vet ./...`、`go build ./...` 均通过。
 
@@ -2558,7 +2558,7 @@ HTTP 接口与错误码集合没有变化。
 ## 2026-10-06 面板自身更新检查来源可配置（`PANEL_RELEASE_API_URL`）
 
 **问题**：`updatecheck` 的 `defaultLatestReleaseURL` 硬编码为
-`https://api.github.com/repos/anxiyizhi/stardew-server-anxi-panel/releases/latest`，
+`https://api.github.com/repos/EeiMo/stardew-server-anxi-panel/releases/latest`，
 `internal/config` 没有对应字段，`cmd/panel/main.go` 与 `internal/web/handler.go`
 两个调用点也都没有传 `LatestReleaseURL`。因此 fork 构建的面板仍然把**上游**版本当成
 可用更新，"查看更新页"链接指向原作者 Release；更危险的是 `internal/updater/images.go`

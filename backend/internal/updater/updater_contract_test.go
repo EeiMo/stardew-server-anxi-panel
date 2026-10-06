@@ -84,7 +84,7 @@ func (f *fakeRuntime) StartApplyHelper(_ context.Context, spec ApplyHelperSpec) 
 
 func standardContainer(composeFile, dataMount string) ContainerInfo {
 	return ContainerInfo{
-		ID: "1234567890abcdef", Name: "anxi-panel", Image: "anxiyizhi/stardew-server-anxi-panel:0.1.14",
+		ID: "1234567890abcdef", Name: "anxi-panel", Image: "EeiMo/stardew-server-anxi-panel:0.1.14",
 		Labels: map[string]string{
 			labelProject: "anxi-panel", labelService: "panel", labelConfigFiles: composeFile,
 			labelWorkingDir: filepath.Dir(composeFile),
@@ -247,8 +247,8 @@ func TestDockerContractRejectsArbitraryAndMutableImages(t *testing.T) {
 		"eeimoo/stardew-server-anxi-panel:0.1.15@sha256:abcd",
 		// The upstream namespaces must stay untrusted: a fallback to them would
 		// replace this fork's build with the original project's image.
-		"ghcr.io/anxiyizhi/stardew-server-anxi-panel:0.1.15",
-		"anxiyizhi/stardew-server-anxi-panel:0.1.15",
+		"ghcr.io/EeiMo/stardew-server-anxi-panel:0.1.15",
+		"EeiMo/stardew-server-anxi-panel:0.1.15",
 	} {
 		if err := ValidateTrustedImage(ref); err == nil {
 			t.Fatalf("image %q unexpectedly accepted", ref)
@@ -262,7 +262,7 @@ func TestDockerContractRejectsArbitraryAndMutableImages(t *testing.T) {
 func TestDockerContractHelperArgsCannotInjectShell(t *testing.T) {
 	installDir := t.TempDir()
 	spec := HelperSpec{
-		Name: "anxi-panel-updater-a1b2", RuntimeImage: "anxiyizhi/stardew-server-anxi-panel:0.1.14",
+		Name: "anxi-panel-updater-a1b2", RuntimeImage: "EeiMo/stardew-server-anxi-panel:0.1.14",
 		TargetVersion: "0.1.15;rm -rf /", ComposeProject: "anxi-panel",
 		HostInstallDir: installDir, HostComposeFile: filepath.Join(installDir, "docker-compose.yml"),
 		DataMount: t.TempDir(), StateFile: "/data/updater/status.json",
@@ -290,7 +290,7 @@ func TestConversionHelperRunsIndependentlyWithHostParentAndRecoveryInputs(t *tes
 	dataMount := filepath.Join(t.TempDir(), "data")
 	installDir := filepath.Dir(dataMount)
 	spec := ApplyHelperSpec{
-		Name: "anxi-panel-updater-apply-a1b2", RuntimeImage: "anxiyizhi/stardew-server-anxi-panel:0.3.13",
+		Name: "anxi-panel-updater-apply-a1b2", RuntimeImage: "EeiMo/stardew-server-anxi-panel:0.3.13",
 		FromVersion: "0.3.13", TargetVersion: "0.3.14", OriginalDigest: "sha256:" + strings.Repeat("a", 64),
 		CurrentContainer: "fnos-panel", ComposeProject: "anxi-panel", ComposeService: "panel",
 		HostInstallDir: installDir, HostComposeFile: filepath.Join(installDir, "docker-compose.yml"),
@@ -311,7 +311,7 @@ func TestDockerContractApplyHelperPreservesHostComposePath(t *testing.T) {
 	installDir := t.TempDir()
 	composeFile := filepath.Join(installDir, "docker-compose.yml")
 	args, err := BuildApplyHelperArgs(ApplyHelperSpec{
-		Name: "anxi-panel-updater-apply-a1b2", RuntimeImage: "anxiyizhi/stardew-server-anxi-panel:0.1.14",
+		Name: "anxi-panel-updater-apply-a1b2", RuntimeImage: "EeiMo/stardew-server-anxi-panel:0.1.14",
 		FromVersion: "0.1.14", TargetVersion: "0.1.15", OriginalDigest: "sha256:old",
 		CurrentContainer: "anxi-panel", ComposeProject: "anxi-panel",
 		HostInstallDir: installDir, HostComposeFile: composeFile, DataMount: "panel-data",
@@ -349,7 +349,7 @@ func TestDockerContractDryRunUsesOnlyNonDestructiveCommandsAndPersistsStatus(t *
 	stateFile := filepath.Join(t.TempDir(), "updater", "status.json")
 	executor := &recordingExecutor{}
 	if err := RunDryRun(context.Background(), DryRunOptions{
-		TargetVersion: "v0.1.15", CurrentImage: "anxiyizhi/stardew-server-anxi-panel:0.1.14",
+		TargetVersion: "v0.1.15", CurrentImage: "EeiMo/stardew-server-anxi-panel:0.1.14",
 		ComposeProject: "anxi-panel", ComposeFile: composeFile, StateFile: stateFile, Executor: executor,
 	}); err != nil {
 		t.Fatal(err)

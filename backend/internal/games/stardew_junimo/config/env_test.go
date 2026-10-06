@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
 )
 
 func TestUpdateEnvFilePreservesQuotedPasswordAcrossMerges(t *testing.T) {

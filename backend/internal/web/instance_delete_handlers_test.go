@@ -12,13 +12,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/config"
-	paneldocker "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/docker"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
-	sj "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
-	sjconfig "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/jobs"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/config"
+	paneldocker "github.com/eeimo/stardew-server-anxi-panel/backend/internal/docker"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
+	sj "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
+	sjconfig "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/jobs"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 func TestWorldDeletionLocksAreInstanceScoped(t *testing.T) {

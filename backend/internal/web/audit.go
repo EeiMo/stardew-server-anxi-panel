@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/docker"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/docker"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 // auditLog writes an audit log entry. It silently ignores errors to avoid

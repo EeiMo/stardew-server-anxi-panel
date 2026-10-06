@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/updater"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/updater"
 )
 
 func main() {

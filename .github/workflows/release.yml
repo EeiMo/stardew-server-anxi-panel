@@ -23,10 +23,10 @@ permissions:
   packages: write
 
 env:
-  DOCKERHUB_IMAGE: anxiyizhi/stardew-server-anxi-panel
+  DOCKERHUB_IMAGE: EeiMo/stardew-server-anxi-panel
   ACR_REGISTRY: crpi-9z3bkb9g7fxeohrg.cn-hangzhou.personal.cr.aliyuncs.com
   ACR_IMAGE: crpi-9z3bkb9g7fxeohrg.cn-hangzhou.personal.cr.aliyuncs.com/anxi-panel/stardew-server-anxi-panel
-  GHCR_IMAGE: ghcr.io/anxiyizhi/stardew-server-anxi-panel
+  GHCR_IMAGE: ghcr.io/EeiMo/stardew-server-anxi-panel
 
 jobs:
   release:

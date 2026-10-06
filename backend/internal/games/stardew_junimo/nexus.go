@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/netdns"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/netdns"
 )
 
 // Nexus Mods only — Stardew Valley game domain. Read-only search; no
@@ -20,7 +20,7 @@ import (
 const (
 	nexusGameDomain      = "stardewvalley"
 	nexusStardewGameID   = "1303"
-	nexusUserAgent       = "stardew-server-anxi-panel/1.0 (+https://github.com/anxi-panel)"
+	nexusUserAgent       = "stardew-server-anxi-panel/1.0 (+https://github.com/EeiMo/stardew-server-anxi-panel)"
 	nexusRequestTimeout  = 10 * time.Second
 	nexusArchiveTimeout  = 20 * time.Minute
 	nexusDefaultPageSize = 20

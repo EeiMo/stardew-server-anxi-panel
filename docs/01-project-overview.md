@@ -41,7 +41,7 @@
 
 当前正式版为 `v0.7.2`（commit `c8ec1db143e451b458c158bc63c7c9f38fffc834`）。本版纳入直连端口独立读取、紧凑登录/初始化卡片、总览与响应式布局、共享纸色，以及失效素材/代码清理和构建输入减负。升级来源为 `v0.7.1`，本版没有新增数据库迁移或运行栈版本变化，嵌入 Control 保持 `0.3.8`。
 
-不可变候选 `35429187345`、独立兼容 `35429187386`、自动 annotated tag `35429987690` 与正式提升 `35429996287` 均成功；tag `v0.7.2` 指向上述 commit，三仓 `0.7.2/latest` 使用唯一 digest=`sha256:3ea2c86054c02673874413d00bfe05e13a17017551b6042ed26f87fb7954e655`。真实 Web 升级、unhealthy 回滚、全新/升级后直连专项和正式镜像 health/version/重启、Release 资产校验均通过，完整矩阵见镜像构建文档。[GitHub Release v0.7.2](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/releases/tag/v0.7.2)
+不可变候选 `35429187345`、独立兼容 `35429187386`、自动 annotated tag `35429987690` 与正式提升 `35429996287` 均成功；tag `v0.7.2` 指向上述 commit，三仓 `0.7.2/latest` 使用唯一 digest=`sha256:3ea2c86054c02673874413d00bfe05e13a17017551b6042ed26f87fb7954e655`。真实 Web 升级、unhealthy 回滚、全新/升级后直连专项和正式镜像 health/version/重启、Release 资产校验均通过，完整矩阵见镜像构建文档。[GitHub Release v0.7.2](https://github.com/EeiMo/stardew-server-anxi-panel/releases/tag/v0.7.2)
 
 当前仓库已经围绕 Stardew driver 与动态实例路由形成完整闭环：
 

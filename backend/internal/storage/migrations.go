@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/migrations"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/migrations"
 )
 
 // Migrate applies embedded SQL migrations that have not run yet.

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/config"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/config"
 )
 
 func TestControlCommandMigrationAndIdempotentImport(t *testing.T) {

@@ -12,13 +12,13 @@ import (
 	"sync"
 	"time"
 
-	paneldocker "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/docker"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/installerrors"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
-	sjconfig "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
-	sharedsteamcmd "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/steamcmd"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/jobs"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	paneldocker "github.com/eeimo/stardew-server-anxi-panel/backend/internal/docker"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/installerrors"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
+	sjconfig "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo/config"
+	sharedsteamcmd "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/steamcmd"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/jobs"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 // regexImagePullLayer recognizes layer progress from docker image pull.

@@ -403,7 +403,7 @@ const panelUpdate = {
   currentVersion: '0.1.14', currentCommit: '3f7a9c2', currentBuildDate: '2026-07-13T12:00:00Z',
   latestVersion: UPDATE === 'available' ? 'v0.1.15' : 'v0.1.14',
   updateAvailable: UPDATE === 'available',
-  releaseUrl: 'https://github.com/anxiyizhi/stardew-server-anxi-panel/releases/tag/v0.1.15',
+  releaseUrl: 'https://github.com/EeiMo/stardew-server-anxi-panel/releases/tag/v0.1.15',
   publishedAt: '2026-07-12T08:00:00Z', checkedAt: '2026-07-13T12:00:00Z',
   checkStatus: UPDATE === 'error' ? 'error' : 'ok', checkError: UPDATE === 'error' ? '访问 GitHub Release 失败' : '',
 }
@@ -412,8 +412,8 @@ const applyStatus = APPLY ? {
   fromVersion: '0.1.14', toVersion: '0.1.15', originalImage: '', originalDigest: '', selectedImage: '', selectedDigest: '', errorCode: APPLY === 'failed_rolled_back' ? 'health_check_failed' : '', error: APPLY === 'failed_rolled_back' ? '新版本未通过健康检查' : '', result: APPLY === 'succeeded' ? '面板升级并验收成功' : APPLY === 'failed_rolled_back' ? '已自动恢复并验收旧面板' : '', logs: [], startedAt: iso(5), updatedAt: iso(0), finishedAt: APPLY === 'succeeded' || APPLY === 'failed_rolled_back' ? iso(0) : null,
 } : null
 const dryRunStatus = {
-  id: 'qa-dry-run', phase: 'succeeded', targetVersion: '0.1.15', targetImage: 'ghcr.io/anxiyizhi/stardew-server-anxi-panel:0.1.15',
-  capability: { supported: true, reason: '标准 Compose 部署可安全升级', code: 'supported', composeProject: 'anxi-panel', composeFile: '', installDir: '', currentContainer: 'anxi-panel', currentImage: 'ghcr.io/anxiyizhi/stardew-server-anxi-panel:0.1.14', dataMount: '', dockerAvailable: true, composeAvailable: true },
+  id: 'qa-dry-run', phase: 'succeeded', targetVersion: '0.1.15', targetImage: 'ghcr.io/EeiMo/stardew-server-anxi-panel:0.1.15',
+  capability: { supported: true, reason: '标准 Compose 部署可安全升级', code: 'supported', composeProject: 'anxi-panel', composeFile: '', installDir: '', currentContainer: 'anxi-panel', currentImage: 'ghcr.io/EeiMo/stardew-server-anxi-panel:0.1.14', dataMount: '', dockerAvailable: true, composeAvailable: true },
   logs: [], startedAt: iso(3), updatedAt: iso(0), finishedAt: iso(0), errorCode: '', error: '',
 }
 const junimoRepairPlan = JUNIMO_CONFIG === 'repairable' ? {

@@ -15,7 +15,7 @@ ENV_FILE="$tmp_dir/.env"
 PANEL_VERSION="latest"
 PANEL_VERSION_WAS_SET=""
 cat >"$ENV_FILE" <<'EOF'
-PANEL_IMAGE=anxiyizhi/stardew-server-anxi-panel:0.2.2
+PANEL_IMAGE=EeiMo/stardew-server-anxi-panel:0.2.2
 PANEL_VERSION=0.2.2
 EOF
 

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 func TestNexusAPIKeySettingsLifecycle(t *testing.T) {

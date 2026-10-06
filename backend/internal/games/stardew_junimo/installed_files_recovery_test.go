@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	paneldocker "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/docker"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/jobs"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	paneldocker "github.com/eeimo/stardew-server-anxi-panel/backend/internal/docker"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/jobs"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 func TestReconcileRestoredGameFiles(t *testing.T) {

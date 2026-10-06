@@ -123,8 +123,8 @@ registry_container="$project-registry"
 release_container="$project-releases"
 session_seed_container="$project-steam-session-seed"
 unknown_session_holder_container="$project-unknown-steam-session-holder"
-target_ref="ghcr.io/anxiyizhi/stardew-server-anxi-panel:$version"
-previous_ref="ghcr.io/anxiyizhi/stardew-server-anxi-panel:$previous_version"
+target_ref="ghcr.io/EeiMo/stardew-server-anxi-panel:$version"
+previous_ref="ghcr.io/EeiMo/stardew-server-anxi-panel:$previous_version"
 previous_fixture_ref="$project/previous-fixture:$previous_version"
 steam_session_volume="stardew_steam-session"
 candidate_runtime_manifest="/workspace/backend/internal/games/stardew_junimo/config/runtime_stack_manifest.json"
@@ -237,10 +237,10 @@ http {
     ssl_certificate /certs/releases.crt;
     ssl_certificate_key /certs/releases.key;
     default_type application/json;
-    location = /repos/anxiyizhi/stardew-server-anxi-panel/releases/latest {
+    location = /repos/EeiMo/stardew-server-anxi-panel/releases/latest {
       return 200 '{"tag_name":"v$version","html_url":"https://example.invalid/releases/v$version","draft":false,"prerelease":false,"published_at":"2026-01-01T00:00:00Z"}';
     }
-    location = /repos/anxiyizhi/stardew-server-anxi-panel/releases {
+    location = /repos/EeiMo/stardew-server-anxi-panel/releases {
       return 200 '[{"tag_name":"v$version","html_url":"https://example.invalid/releases/v$version","draft":false,"prerelease":false,"published_at":"2026-01-01T00:00:00Z"}]';
     }
     location / { return 404; }

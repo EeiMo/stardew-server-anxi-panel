@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/auth"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/auth"
 )
 
 var (

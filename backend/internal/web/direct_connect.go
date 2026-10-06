@@ -3,7 +3,7 @@ package web
 import (
 	"net/http"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
 )
 
 // handleInstanceDirectConnect reads the instance's driver-owned connection

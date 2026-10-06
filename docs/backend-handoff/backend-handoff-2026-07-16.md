@@ -286,7 +286,7 @@
 ## 正式发布证据与后续注意事项
 
 - 用户已于 2026-08-28 明确确认两个未安装客户端 Mod 的实际联机测试通过。发送者本地聊天框可能显示自己的输入，这是原版客户端本地回显边界，不是服务端转发失败；自动契约继续负责正确/错误 global、role、首次认领、失败次数和普通消息等细分边界。
-- 最终 `v0.6.1@5c0135e6bdb5b8353d049030da3c3c06a6e243a0` 已正式发布。不可变候选 [`33177568325`](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/actions/runs/33177568325)（`29m25s`）完成 full code gates、Panel fresh/restart、`v0.6.0` unhealthy/healthy Web 升级、`v0.3.2` 最老边界直升及 immutable DLL/manifest/hash 与 required gate 契约复验；真实聊天仍以用户实机为证。三项条件门禁全部 selected、conditional skipped=无；proof artifact=`release-candidate-0.6.1-5c0135e6bdb5`（ID `9689244375`）。自动 annotated tag workflow=`33179940424`（`19s`），正式提升=`33179959858`（`1m26s`），三仓 `0.6.1/latest` 六引用统一 digest=`sha256:9b7746caeb9c3c9091e7e6c07b1cc3cdf18dce82ebcfb5a70bc4c5a5835961bd`，promotion 未 rebuild。
+- 最终 `v0.6.1@5c0135e6bdb5b8353d049030da3c3c06a6e243a0` 已正式发布。不可变候选 [`33177568325`](https://github.com/EeiMo/stardew-server-anxi-panel/actions/runs/33177568325)（`29m25s`）完成 full code gates、Panel fresh/restart、`v0.6.0` unhealthy/healthy Web 升级、`v0.3.2` 最老边界直升及 immutable DLL/manifest/hash 与 required gate 契约复验；真实聊天仍以用户实机为证。三项条件门禁全部 selected、conditional skipped=无；proof artifact=`release-candidate-0.6.1-5c0135e6bdb5`（ID `9689244375`）。自动 annotated tag workflow=`33179940424`（`19s`），正式提升=`33179959858`（`1m26s`），三仓 `0.6.1/latest` 六引用统一 digest=`sha256:9b7746caeb9c3c9091e7e6c07b1cc3cdf18dce82ebcfb5a70bc4c5a5835961bd`，promotion 未 rebuild。
 - 两条 upgrade fixture 的 owner/container/network/volume 强制清零门禁通过；外层 candidate/fresh/promotion smoke 只有精确名称的 best-effort EXIT trap，并由 hosted runner 终止回收，没有独立 post-count。整条发布链未使用生产数据、长期凭据或 prune。
 - 发布后证据审计无法证明用户双客户端实机是在 Web 升级得到的新 Panel 上执行；candidate 证明了同一 immutable Control 制品、required gate 和升级边界，但 fixture 没有发送真实聊天。不要把两段证据合并成“升级后真实隐私复验”；若用户不能确认本次实测上下文，后续版本须将升级后真实 `!login` fan-out 绑定到同一条可追溯验收。
 - 首次候选 `33168728635` 因等待人工确认在镜像构建/推送前主动取消；`33171764289` 则在 candidate push/proof 前被错误套用到 `v0.6.0` 的 legacy Auth 夹具安全拦截。修复后的正式候选把 unknown holder 放到 previous 启动前，并同时证明 post-`v0.6.0` 与 pre-`v0.6.0` 两侧边界；这两次失败 run 均没有成为正式制品。
@@ -301,7 +301,7 @@
 ## 如何验证、下一步注意事项
 
 - 不可变候选 `33073661356` 成功，包含 Linux test/vet/build、运行栈远程制品与 Junimo 真实 integration、fresh/restart、`v0.5.13 → v0.6.0` unhealthy/healthy Web 升级、unknown-holder/意图迁移/save-import 专项和 `v0.3.2 → v0.6.0` 最老边界直升。proof artifact=`release-candidate-0.6.0-9c6d9c7696c6`（ID `9647693527`）。
-- 自动 annotated tag workflow `33075599631`、正式提升 `33075622114` 均成功；tag object=`c101344eaed4ff4f3d45d7b8949bdded8d6d69f1`，三仓 `0.6.0/latest` 唯一 digest=`sha256:e9c1613a7ffbd13d92d5a197d751cb5de6b08b65f74351e39a4ad0f9b4598d16`。[GitHub Release v0.6.0](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/releases/tag/v0.6.0)
+- 自动 annotated tag workflow `33075599631`、正式提升 `33075622114` 均成功；tag object=`c101344eaed4ff4f3d45d7b8949bdded8d6d69f1`，三仓 `0.6.0/latest` 唯一 digest=`sha256:e9c1613a7ffbd13d92d5a197d751cb5de6b08b65f74351e39a4ad0f9b4598d16`。[GitHub Release v0.6.0](https://github.com/EeiMo/stardew-server-anxi-panel/releases/tag/v0.6.0)
 - 后续修改这些链路必须重新选择受影响矩阵；不得移动 `v0.6.0` tag，也不得把发布前本机 rehearsal 镜像、单元门禁或热预览状态当作正式候选 proof。
 
 # V060-FINAL-SAFETY-PREFLIGHT-1 后端接手记录（2026-08-27，released in v0.6.0）

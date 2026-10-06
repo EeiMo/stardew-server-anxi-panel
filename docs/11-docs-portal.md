@@ -5,19 +5,19 @@
 - 官网首页 release/摘要与 changelog 同步 v0.7.2，说明直连配置、认证/总览/响应式改进以及素材/构建减负，链接正式 Release；v0.7.1 作为历史版本保留。页底继续复用 frontmatter.release。
 - 正式候选、升级/回滚、自动 tag、三仓提升和发布后独立核验已完成，详细证据见 docs/09-image-build.md 顶部。本次官网为发布后文档更新，不触发同 digest 候选重建或移动 tag。
 - 本地 docs:build 6.34s 通过；生成 HTML 精确核对 `.home-note strong` 为 v0.7.2、页底实际更新链接、changelog 最新/历史标题顺序及四项更新正文。静态路由与生成文件映射分别核验；完整构建日志和内容证据在 output/v072-release-20260919。
-- 提交 `69e251353027d90d0ec85624fff3a5aa7163d455` 的 [Pages 35430460046](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/actions/runs/35430460046) build/deploy 全成功。线上首页与实际页底 href `/stardew-server-anxi-panel/changelog` 请求均成功，精确页底 v0.7.2、更新标题顺序 v0.7.2/v0.7.1 和四项正文复验通过。此处为生成/上线 HTML 内容验收，没有另行声称视觉或浏览器交互测试；本轮未改变页面样式和交互。
+- 提交 `69e251353027d90d0ec85624fff3a5aa7163d455` 的 [Pages 35430460046](https://github.com/EeiMo/stardew-server-anxi-panel/actions/runs/35430460046) build/deploy 全成功。线上首页与实际页底 href `/stardew-server-anxi-panel/changelog` 请求均成功，精确页底 v0.7.2、更新标题顺序 v0.7.2/v0.7.1 和四项正文复验通过。此处为生成/上线 HTML 内容验收，没有另行声称视觉或浏览器交互测试；本轮未改变页面样式和交互。
 
 ## 2026-09-18：v0.7.1 页底版本与遗漏说明修正
 
 - 页底 CURRENT RELEASE 复用首页 frontmatter.release，避免另一个硬编码版本漏更新；摘要同步本版内容。changelog 与 GitHub Release 增补未进入世界玩家的占位记录问题，文案按已发布 driver 的行为描述列表/人数/事件过滤和完成创建后的恢复显示。
 - 本地 docs:build 6.83s 通过；Browser plugin not available，使用现有 Playwright/Chrome 在 1440×900、390×844 完成首页页底 → 查看本次更新 → 新修复说明的真实点击。版本、正文、无框架覆盖层、无控制台错误/警告、无横向溢出及截图检查通过。脚本与截图保留于系统临时目录 anxi-v071-doc-fix-20260918；随后按同一流程复核 Pages 上线。
-- 提交 `ffd04266b743abd7604df481a4ae16396aa5539b` 的 [Pages 35313305569](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/actions/runs/35313305569) build/deploy 成功（21s / 9s）。同一脚本对线上桌面和手机重复真实点击，页底精确为 v0.7.1、首页无旧版本、更新日志包含玩家占位修复说明，标题顺序、控制台、框架覆盖层及横向尺寸均通过；GitHub Release 同步文案后已回读核验。本地 4631 预览已停止并确认监听清零。
+- 提交 `ffd04266b743abd7604df481a4ae16396aa5539b` 的 [Pages 35313305569](https://github.com/EeiMo/stardew-server-anxi-panel/actions/runs/35313305569) build/deploy 成功（21s / 9s）。同一脚本对线上桌面和手机重复真实点击，页底精确为 v0.7.1、首页无旧版本、更新日志包含玩家占位修复说明，标题顺序、控制台、框架覆盖层及横向尺寸均通过；GitHub Release 同步文案后已回读核验。本地 4631 预览已停止并确认监听清零。
 
 ## 2026-09-17：官网展示 v0.7.1
 
 - 更新 `website/docs/changelog.md` 与首页 release/摘要，完整说明性能优化、三级资源监控、安装失败解释、VNC 继承及桌面/手机体验；v0.7.0 保留为历史版本。
 - Node 24 Alpine、独立 node_modules/dist/cache 卷执行 npm ci 和 docs:build 通过，VitePress 构建 10.14 秒；生成 HTML 的首页版本、changelog v0.7.1/v0.7.0 顺序及四项更新正文断言通过，三个测试卷已按归属清理。
-- 官网提交 `ec0253bac563004835efced566982725bd3f4597` 的 [Pages 35239660559](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/actions/runs/35239660559) 构建与部署成功（build 20s / deploy 19s）。线上首页与从实际 href 解析的 `/changelog.html` 均 HTTP 200，v0.7.1 最新版本、v0.7.0 历史顺序及四项更新正文全部命中。本轮仅更新文档与官网，没有触发候选重建，没有移动 tag 或改变正式 digest。
+- 官网提交 `ec0253bac563004835efced566982725bd3f4597` 的 [Pages 35239660559](https://github.com/EeiMo/stardew-server-anxi-panel/actions/runs/35239660559) 构建与部署成功（build 20s / deploy 19s）。线上首页与从实际 href 解析的 `/changelog.html` 均 HTTP 200，v0.7.1 最新版本、v0.7.0 历史顺序及四项更新正文全部命中。本轮仅更新文档与官网，没有触发候选重建，没有移动 tag 或改变正式 digest。
 
 ## 2026-09-05：官网展示 v0.7.0
 
@@ -144,7 +144,7 @@
 
 性能约定：首页禁止持续 blur/filter 动画、大面积 `backdrop-filter` 卡片或覆盖整个滚动区域的固定透明层。Hero 与卡片使用静态近实色合成和 `contain`；导航栏是唯一保留的共用轻量毛玻璃。视觉验收除溢出和 console 外，需复核首页计算样式中没有持续动画及额外大面积滤镜。
 
-线上地址：https://anxiyizhi.github.io/stardew-server-anxi-panel/（当前已发布 `v0.7.0` 文档）
+线上地址：https://eeimo.github.io/stardew-server-anxi-panel/（当前已发布 `v0.7.0` 文档）
 
 | 决策项 | 结论 |
 | --- | --- |
@@ -243,7 +243,7 @@ website/docs/
 ## 四、准备工作清单
 
 - [x] 本机已安装 Node.js 20+（`node -v` 确认，实测 v22.22.2）
-- [x] 对 `AnXiYiZhi/stardew-server-anxi-panel` 仓库有 push 权限
+- [x] 对 `EeiMo/stardew-server-anxi-panel` 仓库有 push 权限
 - [x] 对该仓库 Settings 有管理员权限（用于开启 Pages，实测用 `gh api` 直接开通，未走网页操作）
 - [ ] （可选，换自定义域名时才需要）一个你能配置 DNS 的域名
 
@@ -322,7 +322,7 @@ export default defineConfig({
     },
     search: { provider: 'local' },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/AnXiYiZhi/stardew-server-anxi-panel' }
+      { icon: 'github', link: 'https://github.com/EeiMo/stardew-server-anxi-panel' }
     ],
     outline: { label: '本页目录' },
     docFooter: { prev: '上一页', next: '下一页' }
@@ -406,7 +406,7 @@ jobs:
 实测发现这一步其实可以用命令代替，不需要网页操作：
 
 ```bash
-gh api -X POST repos/AnXiYiZhi/stardew-server-anxi-panel/pages -f build_type=workflow
+gh api -X POST repos/EeiMo/stardew-server-anxi-panel/pages -f build_type=workflow
 ```
 
 返回 `"build_type":"workflow"` 即代表开启成功。
@@ -422,7 +422,7 @@ git push
 推送后打开仓库的 `Actions` 标签，确认 `Deploy docs portal` workflow 跑绿。首次运行成功后访问：
 
 ```text
-https://anxiyizhi.github.io/stardew-server-anxi-panel/
+https://eeimo.github.io/stardew-server-anxi-panel/
 ```
 
 （GitHub Pages 域名大小写不敏感，用户名部分习惯写小写。）

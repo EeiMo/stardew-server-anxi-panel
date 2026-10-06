@@ -15,11 +15,11 @@ import (
 	"testing"
 	"time"
 
-	appconfig "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/config"
-	paneldocker "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/docker"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/jobs"
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/storage"
+	appconfig "github.com/eeimo/stardew-server-anxi-panel/backend/internal/config"
+	paneldocker "github.com/eeimo/stardew-server-anxi-panel/backend/internal/docker"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/jobs"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/storage"
 )
 
 func TestNewGameTransactionStandardAndMeadowlandsValidation(t *testing.T) {

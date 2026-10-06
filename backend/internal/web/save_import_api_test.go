@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	sj "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
+	sj "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
 )
 
 func TestSaveImportHostHandlingValidation(t *testing.T) {

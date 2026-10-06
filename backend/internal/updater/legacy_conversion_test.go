@@ -15,14 +15,14 @@ func TestLegacyConversionRejectsStateHelperMismatchBeforeCutover(t *testing.T) {
 	store := NewApplyStateStore(stateFile)
 	if err := store.Write(ApplyStatus{
 		UpdateID: "state-id", Phase: PhaseBackingUp, FromVersion: "0.3.7", ToVersion: "0.3.13",
-		OriginalImage: "anxiyizhi/stardew-server-anxi-panel:0.3.7", OriginalDigest: digest,
+		OriginalImage: "EeiMo/stardew-server-anxi-panel:0.3.7", OriginalDigest: digest,
 		StartedAt: now, UpdatedAt: now,
 	}); err != nil {
 		t.Fatal(err)
 	}
 	err := RunLegacyConversion(context.Background(), LegacyConversionOptions{
 		FromVersion: "0.3.7", TargetVersion: "0.3.13",
-		CurrentImage: "anxiyizhi/stardew-server-anxi-panel:0.3.7", OriginalDigest: digest,
+		CurrentImage: "EeiMo/stardew-server-anxi-panel:0.3.7", OriginalDigest: digest,
 		CurrentContainer: "fnos-panel", StateFile: stateFile,
 		BackupDir: "/data/updater/backups/different-id", DatabaseRelative: "panel.db",
 		ScriptPath: filepath.Join(t.TempDir(), "must-not-run.sh"),

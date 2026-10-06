@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	sj "github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
+	sj "github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/stardew_junimo"
 )
 
 // globalWorkDir returns a directory suitable for docker commands that don't

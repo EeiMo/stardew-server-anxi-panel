@@ -182,7 +182,7 @@ try {
     $taskRoot = Join-Path $agentsRoot $owner
     $candidateTar = Join-Path $taskRoot 'candidate.tar'
     $fixturesTar = Join-Path $taskRoot 'fixtures.tar'
-    $previousRef = "ghcr.io/anxiyizhi/stardew-server-anxi-panel:$PreviousVersion"
+    $previousRef = "ghcr.io/EeiMo/stardew-server-anxi-panel:$PreviousVersion"
     $taskRootCreated = $false
 
     try {

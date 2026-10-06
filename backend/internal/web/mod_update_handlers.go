@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/anxi-panel/stardew-server-anxi-panel/backend/internal/games/registry"
+	"github.com/eeimo/stardew-server-anxi-panel/backend/internal/games/registry"
 )
 
 type modUpdateChecker interface {

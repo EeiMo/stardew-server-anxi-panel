@@ -3501,7 +3501,7 @@
 
 ## 2026-08-06：假定 DinD insecure-registry 会覆盖无端口 HTTPS 引用
 
-- 环境：任务专属 DinD、外层私有 registry 监听 443、目标引用固定为受信任的 `ghcr.io/anxiyizhi/...:0.4.8`。
+- 环境：任务专属 DinD、外层私有 registry 监听 443、目标引用固定为受信任的 `ghcr.io/EeiMo/...:0.4.8`。
 - 错误模式：给 dockerd 传 `--insecure-registry=ghcr.io:443` 后，假定对规范化为无端口 `ghcr.io` 的 push 会自动改走 HTTP。
 - 症状 / 退出码：四个镜像通过 TCP load 后 ID/size 均正确，但 push 仍发起 HTTPS，registry 返回纯 HTTP，报 `server gave HTTP response to HTTPS client` 并退出 1；registry 未收到正式 manifest。
 - 根因：daemon 对该无端口 registry 引用未应用预期的 insecure 匹配；测试不能依赖模糊的端口规范化。

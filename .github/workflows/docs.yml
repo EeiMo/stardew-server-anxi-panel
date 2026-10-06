@@ -1,16 +1,14 @@
 name: Deploy docs portal
 
 on:
-  # Push triggering was removed in this fork: the deploy job targets GitHub Pages
-  # with the "github-pages" environment, which is not configured here, so any push
-  # touching website/** failed. Enable Pages in the repository settings and restore
-  # the push trigger below if this fork should serve its own documentation portal.
-  #
-  # push:
-  #   branches: [main]
-  #   paths:
-  #     - 'website/**'
-  #     - '.github/workflows/docs.yml'
+  # This fork serves its own documentation portal at
+  # https://eeimo.github.io/stardew-server-anxi-panel/ (GitHub Pages is enabled
+  # with "GitHub Actions" as the build source).
+  push:
+    branches: [main]
+    paths:
+      - 'website/**'
+      - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 permissions:

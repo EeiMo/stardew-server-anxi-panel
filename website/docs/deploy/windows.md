@@ -115,7 +115,7 @@ pwd
 
 ```bash
 cd ~
-curl -fsSL -o run.sh https://github.com/anxiyizhi/stardew-server-anxi-panel/releases/latest/download/run.sh && chmod +x run.sh && bash run.sh
+curl -fsSL -o run.sh https://github.com/EeiMo/stardew-server-anxi-panel/releases/latest/download/run.sh && chmod +x run.sh && bash run.sh
 ```
 
 ::: tip 国内加速脚本（HTTP）

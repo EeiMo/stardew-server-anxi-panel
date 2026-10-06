@@ -4,7 +4,7 @@
   <p><strong>把星露谷开服这件事，变得像打开网页一样简单。</strong></p>
   <p>面向中文用户的 Stardew Valley 专用服务器 Web 管理面板。<br>安装、Steam 认证、启停、存档、Mod、玩家与日常维护，一处完成。</p>
   <p>
-    <a href="https://github.com/AnXiYiZhi/stardew-server-anxi-panel/releases/latest"><img src="https://img.shields.io/github/v/release/AnXiYiZhi/stardew-server-anxi-panel?display_name=tag&amp;style=flat-square&amp;color=5b8c3a" alt="Latest Release"></a>
+    <a href="https://github.com/EeiMo/stardew-server-anxi-panel/releases/latest"><img src="https://img.shields.io/github/v/release/EeiMo/stardew-server-anxi-panel?display_name=tag&amp;style=flat-square&amp;color=5b8c3a" alt="Latest Release"></a>
     <a href="LICENSE"><img src="https://img.shields.io/github/license/AnXiYiZhi/stardew-server-anxi-panel?style=flat-square&amp;color=c87935" alt="License"></a>
     <a href="#-快速开始"><img src="https://img.shields.io/badge/运行方式-Docker-2496ED?style=flat-square&amp;logo=docker&amp;logoColor=white" alt="Docker"></a>
     <a href="https://qun.qq.com/universal-share/share?ac=1&amp;authKey=HeQFNP4CqureCKUYia53Hbp8v5O0%2BH5aUPVGyQLofjldXToeO2TSB4JbbYAaWFWW&amp;busi_data=eyJncm91cENvZGUiOiIxMTAzNzk4NDAzIiwidG9rZW4iOiJ2TWhzcWYxNlk4MTlwekdBY1luZWwrY21acTc2SWFkd2wxM25hNUpOOE8rV3RzMThWQWluYUk4Y2F0ZTVIb0poIiwidWluIjoiMTUxNzQ2ODI1MiJ9&amp;data=niTIkqFahNDXKg0NtZOyTcnMsfMI84tU6hUxtn9VnEMYrFTPD7i_dqcj9okLyMQ0sfgLM1m7njUOFxmQqvu64Q&amp;svctype=4&amp;tempid=h5_group_info"><img src="https://img.shields.io/badge/官方QQ群-1103798403-12B7F5?style=flat-square&amp;logo=qq&amp;logoColor=white" alt="官方 QQ 交流群 1103798403"></a>
@@ -62,16 +62,16 @@ Anxi Panel 是围绕 [JunimoServer](https://stardew-valley-dedicated-server.gith
 官方 GitHub Release 安装（推荐）：
 
 ```bash
-curl -fsSL -o run.sh https://github.com/anxiyizhi/stardew-server-anxi-panel/releases/latest/download/run.sh && chmod +x run.sh && bash run.sh
+curl -fsSL -o run.sh https://github.com/EeiMo/stardew-server-anxi-panel/releases/latest/download/run.sh && chmod +x run.sh && bash run.sh
 ```
 
 > [!TIP]
-> **国内加速脚本（HTTP）**
+> **国内加速下载**
 >
-> GitHub Release 下载较慢时，可以使用国内加速地址：
+> GitHub Release 下载较慢时，可以用 GitHub 加速代理拉同一个脚本（实测该代理可达数 MB/s）：
 >
 > ```bash
-> curl -fsSL -o run.sh http://anxinas.dpdns.org/run.sh && chmod +x run.sh && bash run.sh
+> curl -fsSL -o run.sh https://gh-proxy.com/https://github.com/EeiMo/stardew-server-anxi-panel/releases/latest/download/run.sh && chmod +x run.sh && bash run.sh
 > ```
 
 脚本会检查 Docker 环境、生成安全配置、选择可用镜像源并启动面板。部署完成后，在浏览器打开：
@@ -162,7 +162,7 @@ npm install
 npm run build
 ```
 
-准备贡献前，请先阅读[项目总纲](docs/01-project-overview.md)、[后端文档](docs/02-backend.md)、[前端文档](docs/03-frontend.md)和[联调说明](docs/06-integration.md)。欢迎通过 [Issues](https://github.com/AnXiYiZhi/stardew-server-anxi-panel/issues) 反馈问题或提出建议。
+准备贡献前，请先阅读[项目总纲](docs/01-project-overview.md)、[后端文档](docs/02-backend.md)、[前端文档](docs/03-frontend.md)和[联调说明](docs/06-integration.md)。欢迎通过 [Issues](https://github.com/EeiMo/stardew-server-anxi-panel/issues) 反馈问题或提出建议。
 
 ## 🤝 致谢
 

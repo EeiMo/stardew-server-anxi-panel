@@ -1,17 +1,22 @@
 name: fork-image
 
-# Publishes this fork's own panel image to GHCR so the server can run the fork
+# Publishes this fork's own panel image so the deployment host can run the fork
 # build instead of the upstream release image.
+#
+# Two registries are targeted on purpose:
+#   * Docker Hub  — the deployment host reaches it through the docker.1ms.run
+#                   mirror at full speed (measured: alpine in 1s), which is the
+#                   only fast image channel available there.
+#   * GHCR        — kept for anyone whose network can actually reach the GHCR
+#                   blob CDN. The host in question cannot: ghcr.io serves the
+#                   manifest normally but redirects layers to
+#                   pkg-containers.githubusercontent.com, measured at 19 KB/s,
+#                   and every GHCR mirror tried either 404s or stalls the same
+#                   way.
 #
 # The upstream pipeline (.github/workflows/release.yml) pushes to the upstream
 # registry namespaces and depends on upstream secrets and release gates, so it
-# cannot be reused from a fork. This workflow only builds the image and pushes it
-# to this account's own GHCR namespace.
-#
-# Note on registry choice: the deployment host cannot reach
-# registry-1.docker.io or proxy.golang.org directly, so it cannot build the image
-# itself. GitHub runners have unrestricted network access and ghcr.io is
-# reachable from the host, which makes this the only practical publish path.
+# cannot be reused from a fork.
 
 on:
   push:
@@ -31,13 +36,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # GHCR repository paths must be lowercase, but the account name is not.
-      - name: Resolve image reference
+      # Registry repository paths must be lowercase, but the account name is not.
+      - name: Resolve image references
         id: image
+        env:
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
           set -euo pipefail
           owner="$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
-          echo "ref=ghcr.io/${owner}/stardew-server-anxi-panel" >>"$GITHUB_OUTPUT"
+          echo "ghcr=ghcr.io/${owner}/stardew-server-anxi-panel" >>"$GITHUB_OUTPUT"
+          if [ -n "${DOCKERHUB_USER}" ]; then
+            echo "dockerhub=docker.io/${DOCKERHUB_USER}/stardew-server-anxi-panel" >>"$GITHUB_OUTPUT"
+          else
+            echo "dockerhub=" >>"$GITHUB_OUTPUT"
+          fi
 
       - name: Compute build metadata
         id: meta
@@ -56,14 +68,24 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Log in to Docker Hub
+        if: steps.image.outputs.dockerhub != ''
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: |
-            ${{ steps.image.outputs.ref }}:latest
-            ${{ steps.image.outputs.ref }}:${{ steps.meta.outputs.version }}
+            ${{ steps.image.outputs.ghcr }}:latest
+            ${{ steps.image.outputs.ghcr }}:${{ steps.meta.outputs.version }}
+            ${{ steps.image.outputs.dockerhub }}:latest
+            ${{ steps.image.outputs.dockerhub }}:${{ steps.meta.outputs.version }}
           build-args: |
             VERSION=${{ steps.meta.outputs.version }}
             COMMIT=${{ steps.meta.outputs.commit }}
@@ -72,16 +94,21 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Summary
+        env:
+          DOCKERHUB_IMAGE: ${{ steps.image.outputs.dockerhub }}
         run: |
           {
             echo "### Fork image published"
             echo
-            echo "- \`${{ steps.image.outputs.ref }}:${{ steps.meta.outputs.version }}\`"
-            echo "- \`${{ steps.image.outputs.ref }}:latest\`"
             echo "- version \`${{ steps.meta.outputs.version }}\`"
             echo "- commit \`${{ steps.meta.outputs.commit }}\`"
             echo
-            echo "If this is the first publish the package is private by default."
-            echo "Set it to public (Package settings -> Change visibility) so the host"
-            echo "can pull it anonymously, or log in with a token that has read:packages."
+            echo "GHCR: \`${{ steps.image.outputs.ghcr }}:${{ steps.meta.outputs.version }}\`"
+            if [ -n "${DOCKERHUB_IMAGE}" ]; then
+              echo
+              echo "Docker Hub: \`${DOCKERHUB_IMAGE}:${{ steps.meta.outputs.version }}\`"
+              echo
+              echo "The deployment host pulls Docker Hub through the docker.1ms.run"
+              echo "mirror, so use \`docker.1ms.run/<user>/stardew-server-anxi-panel:latest\`."
+            fi
           } >>"$GITHUB_STEP_SUMMARY"

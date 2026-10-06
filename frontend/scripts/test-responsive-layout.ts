@@ -260,9 +260,16 @@ assert.match(dashboardDataSource, /await refreshInstanceState\(\)[\s\S]*?steamIn
 assert.match(dashboardDataSource, /const pollInviteCode = async \(\) => \{[\s\S]*?await refreshInstanceState\(\)[\s\S]*?if \(cancelled \|\| !steamInviteEnabledRef\.current\) return[\s\S]*?await refreshInviteCode\(\)/)
 assert.match(dashboardDataSource, /const stateExposesInviteCode = s\.state === 'running'/)
 assert.match(dashboardDataSource, /if \(!stateExposesInviteCode\) \{[\s\S]*?updateInviteCode\(null\)[\s\S]*?else if \(!recordedInviteCode\)/)
-assert.match(overviewPageSource, /<LanDirectConnectCard dashboardData=\{dashboardData\} \/>[\s\S]*?instanceState\?\.steamInviteEnabled === true[\s\S]*?<InviteCodeCard/)
-assert.match(serverSummarySource, /<LanDirectConnectCard dashboardData=\{dashboardData\} \/>[\s\S]*?instanceState\?\.steamInviteEnabled === true[\s\S]*?<InviteCodeCard/)
-assert.match(mobileHomePageSource, /steamInviteEnabled \? \([\s\S]*?Steam 邀请码/)
+// The invite card must render even when Steam invites are not enabled yet. Gating
+// it behind steamInviteEnabled hid the only entry point an admin had to enable the
+// feature, which locked the card away permanently.
+assert.match(overviewPageSource, /<LanDirectConnectCard dashboardData=\{dashboardData\} \/>\s*<InviteCodeCard instanceState=\{instanceState\}/)
+assert.doesNotMatch(overviewPageSource, /steamInviteEnabled === true\s*&&\s*<InviteCodeCard/)
+assert.match(serverSummarySource, /<LanDirectConnectCard dashboardData=\{dashboardData\} \/>\s*<InviteCodeCard/)
+assert.doesNotMatch(serverSummarySource, /steamInviteEnabled === true\s*&&\s*<InviteCodeCard/)
+// Same for the mobile invite row; the flag is now used only for the stop warning.
+assert.match(mobileHomePageSource, /sd-mhome-invite-label">Steam 邀请码/)
+assert.doesNotMatch(mobileHomePageSource, /steamInviteEnabled \? \(/)
 assert.match(mobileHomePageSource, /局域网直连/)
 assert.match(mobileHomePageSource, /const steamInviteEnabled = steamInviteIsEnabled\(instanceState\)/)
 assert.match(mobileHomePageSource, /invite\.retryAuthorization && isAdmin \? \([\s\S]*?重新授权/)
@@ -273,7 +280,12 @@ assert.match(mobileHomePageSource, /steamAuth\.requiresStop[\s\S]*?请先停止�
 assert.match(mobileHomePageSource, /const \[pendingStartupSawActiveJob, setPendingStartupSawActiveJob\] = useState\(false\)/)
 assert.match(mobileHomePageSource, /pendingStartupAction && hasActiveLifecycleJob[\s\S]*?setPendingStartupSawActiveJob\(true\)/)
 assert.match(mobileHomePageSource, /shouldClearPendingStartupAction\(\{[\s\S]*?sawActiveLifecycleJob: pendingStartupSawActiveJob[\s\S]*?setPendingStartupAction\(null\)[\s\S]*?setPendingStartupSawActiveJob\(false\)/)
-assert.match(inviteCardSource, /if \(!enabled\) return null/)
+// The card must never hide itself just because invites are not enabled yet: that
+// self-lock was exactly why an administrator had no reachable way to turn the
+// feature on. It now renders the enable entry instead.
+assert.doesNotMatch(inviteCardSource, /if \(!enabled\) return null/)
+assert.match(inviteCardSource, /const needsEnable = presentation\.needsEnable/)
+assert.match(inviteCardSource, /needsEnable \? \([\s\S]*?canManageSteamInvite \? \(/)
 assert.match(inviteCardSource, /授权尚未就绪|重新授权/)
 assert.match(inviteCardSource, /steamInvitePresentation\([\s\S]*?instanceState\?\.state/)
 assert.match(mobileHomePageSource, /steamInvitePresentation\([\s\S]*?instanceState\?\.state/)
@@ -600,7 +612,12 @@ assert.match(releaseUpgradeE2E, /ServerRuntimeSettingsDialog/)
 assert.match(releaseUpgradeE2E, /FarmhouseStack（兼容已有配置）/)
 assert.match(releaseUpgradeE2E, /game-day rollback hover details/)
 assert.ok(releaseCandidateWorkflow.includes('scripts/run-release-gates.sh'))
-assert.ok(releaseCandidateWorkflow.includes('push:\n    branches: [main]'))
+// This fork removed the push trigger from the release-candidate pipeline: it builds
+// and validates a candidate against the upstream image namespaces and needs upstream
+// secrets and CI capacity, so it failed on every push to main. It is manual-only
+// here, and this fork's own image is published by fork-image.yml.
+assert.ok(!releaseCandidateWorkflow.includes('push:\n    branches: [main]'))
+assert.ok(releaseCandidateWorkflow.includes('workflow_dispatch:'))
 assert.ok(releaseCandidateWorkflow.includes('oldest_version:'))
 assert.ok(releaseCandidateWorkflow.includes('Validate affected oldest supported Web upgrade'))
 assert.ok(releaseCandidateWorkflow.includes('candidate-oldest.json'))

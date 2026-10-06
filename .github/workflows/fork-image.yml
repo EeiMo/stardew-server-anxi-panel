@@ -21,6 +21,7 @@ name: fork-image
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
 
 concurrency:
@@ -51,11 +52,30 @@ jobs:
             echo "dockerhub=" >>"$GITHUB_OUTPUT"
           fi
 
+      # A tag push (v0.8.0) is what produces a version the panel's one-click
+      # updater can consume. internal/updater.NormalizeTargetVersion only accepts
+      # an exact stable semantic version, and TrustedImageCandidates builds the
+      # pull reference as <repository>:<that version>, so the image must carry a
+      # stable tag or the updater has nothing to pull. Branch pushes only refresh
+      # :latest and get a development version, which the update check reports as
+      # unavailable rather than offering a bogus upgrade.
       - name: Compute build metadata
         id: meta
         run: |
           set -euo pipefail
-          echo "version=0.7.2-ei.${{ github.run_number }}" >>"$GITHUB_OUTPUT"
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            version="${GITHUB_REF_NAME#v}"
+            version="${version#V}"
+            if ! printf '%s' "$version" | grep -Eq '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'; then
+              echo "::error::tag ${GITHUB_REF_NAME} is not a stable semantic version; expected vMAJOR.MINOR.PATCH"
+              exit 1
+            fi
+            echo "stable=true" >>"$GITHUB_OUTPUT"
+          else
+            version="0.7.2-ei.${{ github.run_number }}"
+            echo "stable=false" >>"$GITHUB_OUTPUT"
+          fi
+          echo "version=${version}" >>"$GITHUB_OUTPUT"
           echo "commit=$(git rev-parse HEAD)" >>"$GITHUB_OUTPUT"
           echo "build_date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >>"$GITHUB_OUTPUT"
 

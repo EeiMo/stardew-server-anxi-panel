@@ -8,6 +8,7 @@
 #     --build-arg GOLANG_IMAGE=docker.1ms.run/library/golang:1.25-alpine \
 #     --build-arg ALPINE_IMAGE=docker.1ms.run/library/alpine:3.20 \
 #     --build-arg GOPROXY=https://goproxy.cn,direct \
+#     --build-arg NPM_REGISTRY=https://registry.npmmirror.com \
 #     -t anxi-panel:local .
 ARG NODE_IMAGE=node:22-alpine
 ARG GOLANG_IMAGE=golang:1.25-alpine
@@ -18,9 +19,13 @@ ARG ALPINE_IMAGE=alpine:3.20
 # ============================================================
 FROM ${NODE_IMAGE} AS frontend-builder
 
+# Hosts that cannot reach registry.npmjs.org can pass
+# --build-arg NPM_REGISTRY=https://registry.npmmirror.com.
+ARG NPM_REGISTRY=https://registry.npmjs.org
+
 WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json* ./
-RUN npm ci --include=dev
+RUN npm ci --include=dev --registry=${NPM_REGISTRY}
 COPY frontend/ ./
 COPY backend/internal/games/installerrors/catalog.json /app/backend/internal/games/installerrors/catalog.json
 RUN npm run build

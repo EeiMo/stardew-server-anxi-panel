@@ -48,7 +48,7 @@ services:
       #
       # 面板自身更新检查所轮询的 GitHub releases/latest 接口。
       # 使用 fork 构建的镜像必须指向自己的仓库，否则面板会把上游版本当成可用更新，
-      # 一键升级会用上游镜像覆盖当前构建。留空则使用内置的上游默认地址。
+      # 一键升级会用上游镜像覆盖当前构建。默认已指向本 fork 自己的仓库，通常无需设置。
       # PANEL_RELEASE_API_URL=https://api.github.com/repos/<owner>/<repo>/releases/latest
 
 volumes:

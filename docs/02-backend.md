@@ -2565,7 +2565,7 @@ HTTP 接口与错误码集合没有变化。
 的受信镜像前缀同样是上游命名空间，点一次"一键升级"就会用上游镜像覆盖 fork 构建。
 
 **修复**：新增 `Config.ReleaseAPIURL`，来自环境变量 `PANEL_RELEASE_API_URL`，
-留空保持内置上游默认值（不改变既有部署行为）。两个 `updatecheck.New` 调用点都传入
+留空使用内置默认值（本 fork 已把默认值指向自己的仓库）。两个 `updatecheck.New` 调用点都传入
 `LatestReleaseURL`。部署侧由 `deploy/run.sh` 写入 `.env` 并在生成的 compose 中透传，
 示例 `deploy/docker-compose.yml` 同步补注释。
 

@@ -146,7 +146,7 @@ ComposeDown、失败阶段被改写成 `new_game_isolation_stop_failed`），已
 用上游镜像覆盖 fork 构建。
 
 **修复**：新增 `Config.ReleaseAPIURL`，来自环境变量 `PANEL_RELEASE_API_URL`，
-**留空保持内置上游默认值**（不改变既有部署行为），两个调用点传入
+**留空使用内置默认值**（本 fork 已把默认值指向自己的仓库 EeiMo/stardew-server-anxi-panel），两个调用点传入
 `LatestReleaseURL`；`deploy/run.sh` 把该变量写进 `.env` 并在生成的 compose 中透传
 （此前该变量只被安装脚本用来解析待拉取版本，从未进入面板容器），
 `deploy/docker-compose.yml` 示例同步补注释。

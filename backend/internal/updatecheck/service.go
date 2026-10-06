@@ -18,7 +18,13 @@ import (
 )
 
 const (
-	defaultLatestReleaseURL = "https://api.github.com/repos/anxiyizhi/stardew-server-anxi-panel/releases/latest"
+	// This fork publishes its own releases, so the panel checks its own
+	// repository by default. Pointing this at the upstream project made the panel
+	// report the upstream version as an available update, and the one-click
+	// updater would then have replaced this build with the upstream image.
+	// PANEL_RELEASE_API_URL still overrides it for deployments that want a
+	// different source.
+	defaultLatestReleaseURL = "https://api.github.com/repos/EeiMo/stardew-server-anxi-panel/releases/latest"
 	defaultInterval         = 6 * time.Hour
 	defaultJitter           = 36 * time.Minute
 	requestTimeout          = 15 * time.Second

@@ -2809,7 +2809,7 @@ curl -fsSL -o migrate-fnos.sh https://github.com/anxiyizhi/stardew-server-anxi-p
 PANEL_RELEASE_API_URL=https://api.github.com/repos/<owner>/<repo>/releases/latest
 ```
 
-并在该仓库发布 GitHub Release，否则面板的更新检查会 404 并显示检查失败。
+并在该仓库发布 GitHub Release，否则面板的更新检查会 404 并显示检查失败。本 fork 已把内置默认值指向 EeiMo/stardew-server-anxi-panel，因此 .env 通常无需设置该变量；只有想换成别的来源时才需要。
 
 **尚未处理**：`internal/updater/images.go` 的受信镜像前缀依旧是上游命名空间
 （`anxiyizhi/stardew-server-anxi-panel` 等）。只要面板仍从该命名空间拉取，

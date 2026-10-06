@@ -41,6 +41,10 @@ PANEL_IMAGE_CANDIDATES="${PANEL_IMAGE_CANDIDATES:-}"
 
 RUN_SH_URL="${RUN_SH_URL:-https://github.com/anxiyizhi/stardew-server-anxi-panel/releases/latest/download/run.sh}"
 RUN_SH_URL_CANDIDATES="${RUN_SH_URL_CANDIDATES:-https://gh.llkk.cc/${RUN_SH_URL},https://github.dpik.top/${RUN_SH_URL},https://ghfast.top/${RUN_SH_URL},${RUN_SH_URL}}"
+# Only an explicit value is persisted into .env. The panel now checks this
+# repository's own releases by default, and blindly writing the installer's
+# upstream resolution default here would silently point it back at upstream.
+PANEL_RELEASE_API_URL_WAS_SET="${PANEL_RELEASE_API_URL+x}"
 PANEL_RELEASE_API_URL="${PANEL_RELEASE_API_URL:-https://api.github.com/repos/anxiyizhi/stardew-server-anxi-panel/releases/latest}"
 PANEL_RELEASE_API_URL_CANDIDATES="${PANEL_RELEASE_API_URL_CANDIDATES:-${PANEL_RELEASE_API_URL},https://gh.llkk.cc/${PANEL_RELEASE_API_URL},https://github.dpik.top/${PANEL_RELEASE_API_URL},https://ghfast.top/${PANEL_RELEASE_API_URL}}"
 PANEL_RELEASE_LATEST_URL="${PANEL_RELEASE_LATEST_URL:-https://github.com/anxiyizhi/stardew-server-anxi-panel/releases/latest}"
@@ -586,8 +590,10 @@ PANEL_HOST_COMPOSE_FILE=$PANEL_HOST_COMPOSE_FILE
 PANEL_COMPOSE_PROJECT=$PANEL_COMPOSE_PROJECT
 PANEL_DATA_DIR=$data_dir
 PANEL_MODE=single
-PANEL_RELEASE_API_URL=$PANEL_RELEASE_API_URL
 EOF
+  if [[ -n "$PANEL_RELEASE_API_URL_WAS_SET" ]]; then
+    printf 'PANEL_RELEASE_API_URL=%s\n' "$PANEL_RELEASE_API_URL" >>"$ENV_FILE"
+  fi
   chmod 600 "$ENV_FILE"
 }
 

@@ -1,24 +1,11 @@
 name: Validate release candidate
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "Dockerfile"
-      - ".dockerignore"
-      - "backend/**"
-      - "frontend/**"
-      - "!frontend/scripts/**"
-      - "browser-extensions/**"
-      - "deploy/**"
-      - "scripts/release-candidate.*"
-      - "scripts/run-release-gates.sh"
-      - "scripts/validate-release-matrix.sh"
-      - "scripts/compatibility_matrix.py"
-      - "scripts/tests/**"
-      - ".github/workflows/release-candidate.yml"
-      - ".github/workflows/release-after-candidate.yml"
-      - ".github/workflows/release.yml"
+  # Push triggering was removed in this fork. This pipeline builds and validates a
+  # release candidate against the upstream image namespaces and needs upstream
+  # secrets and CI capacity, so on a fork it fails on every push that touches the
+  # backend, the frontend, the Dockerfile or the deploy scripts. Run it on demand
+  # instead. This fork's own image is built by fork-image.yml.
   workflow_dispatch:
     inputs:
       version:

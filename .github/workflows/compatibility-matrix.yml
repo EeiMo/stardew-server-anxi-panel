@@ -9,8 +9,9 @@ on:
       - "scripts/compatibility_matrix.py"
       - "scripts/tests/test_compatibility_matrix.py"
       - ".github/workflows/compatibility-matrix.yml"
-  push:
-    branches: [main]
+  # Push triggering was removed in this fork. These gates depend on the upstream
+  # CI environment and secrets, so on a fork they fail on every push to main and
+  # produce nothing but failure notifications. Run them on demand instead.
   workflow_dispatch:
 
 permissions:

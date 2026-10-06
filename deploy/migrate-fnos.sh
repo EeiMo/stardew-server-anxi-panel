@@ -7,8 +7,11 @@ set -Eeuo pipefail
 # script never deletes Panel data, game containers, volumes, saves, or mods.
 
 SCRIPT_REVISION="3"
-GITHUB_LATEST_API="https://api.github.com/repos/anxiyizhi/stardew-server-anxi-panel/releases/latest"
-GITHUB_LATEST_API_CN="https://gh-proxy.com/https://api.github.com/repos/anxiyizhi/stardew-server-anxi-panel/releases/latest"
+# This fork publishes its own panel releases. Resolving the upstream repository
+# here would migrate the container onto the upstream image and silently discard
+# this fork's build.
+GITHUB_LATEST_API="https://api.github.com/repos/EeiMo/stardew-server-anxi-panel/releases/latest"
+GITHUB_LATEST_API_CN="https://gh-proxy.com/https://api.github.com/repos/EeiMo/stardew-server-anxi-panel/releases/latest"
 OCI_TITLE="stardew-server-anxi-panel"
 DEFAULT_PROJECT="anxi-panel-managed"
 
@@ -40,11 +43,12 @@ trusted_panel_image() {
   local image="${1%@*}" repo="${1%@*}"
   repo="${repo%:*}"
   case "$repo" in
-    anxiyizhi/stardew-server-anxi-panel|\
-    ghcr.io/anxiyizhi/stardew-server-anxi-panel|\
-    crpi-9z3bkb9g7fxeohrg.cn-hangzhou.personal.cr.aliyuncs.com/anxi-panel/stardew-server-anxi-panel|\
-    docker.1ms.run/anxiyizhi/stardew-server-anxi-panel|\
-    docker.m.daocloud.io/anxiyizhi/stardew-server-anxi-panel) return 0 ;;
+    eeimoo/stardew-server-anxi-panel|\
+    docker.io/eeimoo/stardew-server-anxi-panel|\
+    ghcr.io/eeimo/stardew-server-anxi-panel|\
+    docker.1ms.run/eeimoo/stardew-server-anxi-panel|\
+    docker.1panel.live/eeimoo/stardew-server-anxi-panel|\
+    docker.m.daocloud.io/eeimoo/stardew-server-anxi-panel) return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -380,11 +384,12 @@ if version_gt "$panel_version" "$TARGET_VERSION"; then
 fi
 
 image_candidates=(
-  "crpi-9z3bkb9g7fxeohrg.cn-hangzhou.personal.cr.aliyuncs.com/anxi-panel/stardew-server-anxi-panel:$TARGET_VERSION"
-  "docker.1ms.run/anxiyizhi/stardew-server-anxi-panel:$TARGET_VERSION"
-  "docker.m.daocloud.io/anxiyizhi/stardew-server-anxi-panel:$TARGET_VERSION"
-  "ghcr.io/anxiyizhi/stardew-server-anxi-panel:$TARGET_VERSION"
-  "anxiyizhi/stardew-server-anxi-panel:$TARGET_VERSION"
+  "docker.1ms.run/eeimoo/stardew-server-anxi-panel:$TARGET_VERSION"
+  "docker.1panel.live/eeimoo/stardew-server-anxi-panel:$TARGET_VERSION"
+  "docker.m.daocloud.io/eeimoo/stardew-server-anxi-panel:$TARGET_VERSION"
+  "docker.io/eeimoo/stardew-server-anxi-panel:$TARGET_VERSION"
+  "eeimoo/stardew-server-anxi-panel:$TARGET_VERSION"
+  "ghcr.io/eeimo/stardew-server-anxi-panel:$TARGET_VERSION"
 )
 
 echo "已自动选择最高版本的有效 Panel："

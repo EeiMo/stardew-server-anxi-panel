@@ -33,21 +33,25 @@ PANEL_HOST_INSTALL_DIR="${PANEL_HOST_INSTALL_DIR:-$INSTALL_DIR}"
 PANEL_HOST_COMPOSE_FILE="${PANEL_HOST_COMPOSE_FILE:-$INSTALL_DIR/docker-compose.yml}"
 PANEL_COMPOSE_PROJECT="${PANEL_COMPOSE_PROJECT:-$PANEL_NAME}"
 
-CN_REGISTRY_IMAGE="${CN_REGISTRY_IMAGE:-crpi-9z3bkb9g7fxeohrg.cn-hangzhou.personal.cr.aliyuncs.com/anxi-panel/stardew-server-anxi-panel}"
-DOCKERHUB_IMAGE="${DOCKERHUB_IMAGE:-anxiyizhi/stardew-server-anxi-panel}"
-GHCR_IMAGE="${GHCR_IMAGE:-ghcr.io/anxiyizhi/stardew-server-anxi-panel}"
+# This fork publishes its own panel image and its own GitHub Releases. Every
+# default below therefore points at this fork instead of the upstream project:
+# leaving them on upstream made `run.sh` resolve the upstream version and pull
+# the upstream image, silently replacing this fork's build with the original one.
+CN_REGISTRY_IMAGE="${CN_REGISTRY_IMAGE:-docker.1ms.run/eeimoo/stardew-server-anxi-panel}"
+DOCKERHUB_IMAGE="${DOCKERHUB_IMAGE:-eeimoo/stardew-server-anxi-panel}"
+GHCR_IMAGE="${GHCR_IMAGE:-ghcr.io/eeimo/stardew-server-anxi-panel}"
 DEFAULT_MIRROR="${DEFAULT_MIRROR:-cn}"
 PANEL_IMAGE_CANDIDATES="${PANEL_IMAGE_CANDIDATES:-}"
 
-RUN_SH_URL="${RUN_SH_URL:-https://github.com/anxiyizhi/stardew-server-anxi-panel/releases/latest/download/run.sh}"
+RUN_SH_URL="${RUN_SH_URL:-https://github.com/EeiMo/stardew-server-anxi-panel/releases/latest/download/run.sh}"
 RUN_SH_URL_CANDIDATES="${RUN_SH_URL_CANDIDATES:-https://gh.llkk.cc/${RUN_SH_URL},https://github.dpik.top/${RUN_SH_URL},https://ghfast.top/${RUN_SH_URL},${RUN_SH_URL}}"
 # Only an explicit value is persisted into .env. The panel now checks this
 # repository's own releases by default, and blindly writing the installer's
 # upstream resolution default here would silently point it back at upstream.
 PANEL_RELEASE_API_URL_WAS_SET="${PANEL_RELEASE_API_URL+x}"
-PANEL_RELEASE_API_URL="${PANEL_RELEASE_API_URL:-https://api.github.com/repos/anxiyizhi/stardew-server-anxi-panel/releases/latest}"
+PANEL_RELEASE_API_URL="${PANEL_RELEASE_API_URL:-https://api.github.com/repos/EeiMo/stardew-server-anxi-panel/releases/latest}"
 PANEL_RELEASE_API_URL_CANDIDATES="${PANEL_RELEASE_API_URL_CANDIDATES:-${PANEL_RELEASE_API_URL},https://gh.llkk.cc/${PANEL_RELEASE_API_URL},https://github.dpik.top/${PANEL_RELEASE_API_URL},https://ghfast.top/${PANEL_RELEASE_API_URL}}"
-PANEL_RELEASE_LATEST_URL="${PANEL_RELEASE_LATEST_URL:-https://github.com/anxiyizhi/stardew-server-anxi-panel/releases/latest}"
+PANEL_RELEASE_LATEST_URL="${PANEL_RELEASE_LATEST_URL:-https://github.com/EeiMo/stardew-server-anxi-panel/releases/latest}"
 
 COMPOSE_FILE="$INSTALL_DIR/docker-compose.yml"
 ENV_FILE="$INSTALL_DIR/.env"

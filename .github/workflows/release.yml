@@ -1,9 +1,11 @@
 name: Promote validated panel candidate
 
 on:
-  push:
-    tags:
-      - "v*"
+  # Tag triggering was removed in this fork. This pipeline promotes a validated
+  # candidate into the upstream registry namespaces (Docker Hub, ACR and GHCR
+  # under the upstream account) and needs upstream secrets plus the completed
+  # release gates, so on a fork it fails on every v* tag. This fork publishes its
+  # own image through fork-image.yml, which is triggered by the same v* tags.
   workflow_dispatch:
     inputs:
       tag:

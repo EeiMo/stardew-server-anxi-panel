@@ -1,7 +1,22 @@
+# Base images are overridable so a host that cannot reach registry-1.docker.io can
+# still build locally through a registry mirror instead of depending on a
+# prebuilt image. Example for a mainland China host that can reach docker.1ms.run
+# but not Docker Hub, proxy.golang.org or the GHCR blob CDN:
+#
+#   docker build \
+#     --build-arg NODE_IMAGE=docker.1ms.run/library/node:22-alpine \
+#     --build-arg GOLANG_IMAGE=docker.1ms.run/library/golang:1.25-alpine \
+#     --build-arg ALPINE_IMAGE=docker.1ms.run/library/alpine:3.20 \
+#     --build-arg GOPROXY=https://goproxy.cn,direct \
+#     -t anxi-panel:local .
+ARG NODE_IMAGE=node:22-alpine
+ARG GOLANG_IMAGE=golang:1.25-alpine
+ARG ALPINE_IMAGE=alpine:3.20
+
 # ============================================================
 # Stage 1: Build frontend (React/Vite)
 # ============================================================
-FROM node:22-alpine AS frontend-builder
+FROM ${NODE_IMAGE} AS frontend-builder
 
 WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json* ./
@@ -13,7 +28,7 @@ RUN npm run build
 # ============================================================
 # Stage 2: Build browser extension artifacts
 # ============================================================
-FROM alpine:3.20 AS extension-builder
+FROM ${ALPINE_IMAGE} AS extension-builder
 
 WORKDIR /work
 
@@ -25,7 +40,7 @@ RUN cd browser-extensions/nexus-slow-installer \
 # ============================================================
 # Stage 3: Build backend (Go)
 # ============================================================
-FROM golang:1.25-alpine AS backend-builder
+FROM ${GOLANG_IMAGE} AS backend-builder
 
 ARG VERSION=dev
 ARG COMMIT=
@@ -59,7 +74,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
 # ============================================================
 # Stage 4: Runtime image
 # ============================================================
-FROM alpine:3.20
+FROM ${ALPINE_IMAGE}
 
 ARG VERSION=dev
 ARG COMMIT=
